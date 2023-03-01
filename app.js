@@ -1,6 +1,5 @@
-const path = require('path')
-const os = require('os')
-const fs = require('fs')
+const path = require('node:path')
+const fs = require('node:fs')
 
 
 // завдання від Віктора з сортуванням
@@ -44,40 +43,61 @@ const fs = require('fs')
 // FILE: {fileName}
 // FOLDER: {folderName}
 
-const createFiles = (dirName) => {
-    fs.mkdir(path.join(__dirname, dirName), (err) => {
+const createFiles = async (dirName,n) => {
+    const arr=[]
+    for (let i = 0; i < n; i++) {
+        arr.push(i);
+    }
+    fs.mkdir(path.join(__dirname, dirName),{recursive:true}, (err) => {
         if (err) throw new Error(err.message)
     })
-    for (let i = 0; i < 5; i++) {
-        fs.mkdir(path.join(__dirname, dirName, `${i}`), (err) => {
+    const filesPromises = arr.map(async (i)=>{
+        await fs.mkdir(path.join(__dirname, dirName, `${i}`),{recursive:true}, (err) => {
             if (err) throw new Error(err.message)
         })
-        fs.appendFile(path.join(__dirname, dirName, `${i}.txt`), `student id${i}`, (err) => {
+        await fs.writeFile(path.join(__dirname, dirName, `${i}.txt`), `student id${i}`, (err) => {
             if (err) throw new Error(err.message)
         })
-    }
+    })
+
+    const promises=Promise.allSettled(filesPromises)
+    console.log(promises);
 }
-const readFiles=(dirName)=>{
-    fs.readdir(path.join(__dirname, dirName), {withFileTypes: true}, (err, files) => {
+// const readFiles=async (dirName)=>{
+//     await fs.readdir(path.join(__dirname, dirName), {withFileTypes: true}, (err, files) => {
+//         if (err) throw new Error(err.message)
+//         for (let file of files) {
+//             if (file.isFile()) {
+//                 console.log(`FILE: ${file.name}`)
+//             }
+//             if (file.isDirectory()) {
+//                 console.log(`FOLDER: ${file.name}`)
+//             }
+//         }
+//     })
+// }
+const readFiles=async (dirName)=>{
+    await fs.readdir(path.join(__dirname, dirName), (err, files) => {
         if (err) throw new Error(err.message)
         for (let file of files) {
-            if (file.isFile()) {
-                console.log(`FILE: ${file.name}`)
+            fs.stat(path.join(__dirname,dirName,file),(err, stats)=>{
+                const isFile=stats.isFile()
+            if (isFile) {
+                console.log(`FILE: ${file}`)
             }
-            if (file.isDirectory()) {
-                console.log(`FOLDER: ${file.name}`)
+            if (!isFile) {
+                console.log(`FOLDER: ${file}`)
             }
+            })
         }
     })
 }
 
-
-const createRead=async (dirName)=>{
-    await createFiles(dirName)
-    await readFiles(dirName)
+const createRead=async (dirName,n)=>{
+    await createFiles(dirName,n).then(readFiles(dirName))
 }
 
-createRead('hw1')
+createRead('hw1',10)
 
 
 
