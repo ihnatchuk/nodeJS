@@ -5,6 +5,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 
 const fsService = require('./fs.service')
+const {ageIsValid, nameIsValid, genderIsValid} = require("./validator");
 
 app.get('/users', async (req, res) => {
     const users = await fsService.reader()
@@ -13,153 +14,137 @@ app.get('/users', async (req, res) => {
 app.get('/users/:userId', async (req, res) => {
     const {userId} = req.params
     const users = await fsService.reader()
-    res.json(users[userId])
+    const index = users.findIndex(user => user.id === +userId)
+
+    if (index !== -1) {
+        res.json(users[index])
+        return
+    }
+    res.status(400).send('User not found')
 })
 
 app.post('/users', async (req, res) => {
     const body = req.body;
-    let reqMassage = ''
+    const nameRes = nameIsValid(body.name)
+    const ageRes = ageIsValid(body.age)
+    const genderRes = genderIsValid(body.gender)
 
-    let genderIsValid = false;
-    let ageIsValid = false;
-    let nameIsValid = false;
+    if (ageRes.isValid && nameRes.isValid && genderRes.isValid) {
 
-    if ((typeof body.age !== 'undefined') && (!isNaN(+body.age))) {
-        if (+body.age > 0) {
-            ageIsValid = true
-        } else {
-            ageIsValid = false
-            reqMassage = 'Age is incorrect'
-        }
-    } else {
-        ageIsValid = false
-        reqMassage = 'Data is incorrect'
-    }
-
-    if (typeof body.name !== 'undefined') {
-        if ((typeof body.name === 'string') && (body.name.length > 1)) {
-            nameIsValid = true
-        } else {
-            nameIsValid = false
-            reqMassage = 'Name is incorrect'
-        }
-    } else {
-        nameIsValid = false
-        reqMassage = 'Data is incorrect'
-    }
-
-    if (typeof body.gender !== 'undefined') {
-        if (body.gender === 'male' || body.gender === 'female' || body.gender === 'mixed') {
-            genderIsValid = true
-        } else {
-            genderIsValid = false
-            reqMassage = 'Gender is incorrect'
-        }
-    } else {
-        nameIsValid = false
-        reqMassage = 'Data is incorrect'
-    }
-
-    if (ageIsValid && nameIsValid && genderIsValid) {
         const users = await fsService.reader()
-        users.push(body)
+        const newUserId = users.length ? users[users.length - 1].id + 1 : 1
+
+        users.push({id: newUserId, ...body})
+
         await fsService.writer(users)
+
         res.status(201).json({
             message: 'User created!'
         })
-    } else {
-        res.status(400).json({
-            message: reqMassage
-        })
+        return
     }
-
+    res.status(400).json({
+        message: [nameRes.reqMassage,
+            ageRes.reqMassage,
+            genderRes.reqMassage].join(' ')
+    })
 })
 
 app.delete('/users/:userId', async (req, res) => {
     const {userId} = req.params
+
     const users = await fsService.reader()
 
-    if ((+userId + 1 > 0) && (+userId < users.length)) {
+    const index = users.findIndex(user => user.id === +userId)
 
-        users.splice(userId, 1)
+    if (index !== -1) {
+
+        users.splice(index, 1)
         await fsService.writer(users)
         res.send(`User ${userId} deleted!`)
-
-    } else {
-        res.send('UserId not found')
+        return
     }
+    res.status(400).send('User not found')
+
 })
 
 app.put('/users/:userId', async (req, res) => {
     const body = req.body;
     const {userId} = req.params
 
-    let reqMassage = ''
-    let ageIsValid = false;
-    let nameIsValid = false;
-    let genderIsValid = false;
+    const nameRes = nameIsValid(body.name)
+    const ageRes = ageIsValid(body.age)
+    const genderRes = genderIsValid(body.gender)
 
+    const users = await fsService.reader()
+    const index=users.findIndex(user=>user.id===+userId)
+    if (index===-1){
+        res.send('UserId not found')
+        return
+    }
 
-    console.log(body);
-    console.log(userId);
+    if (ageRes.isValid && nameRes.isValid && genderRes.isValid) {
+
+        users[index]={...users[index],...body}
+
+        await fsService.writer(users)
+
+        res.status(201).json({
+            message: 'User updated!'
+        })
+        return
+    }
+
+    res.status(400).json({
+        message: [nameRes.reqMassage,
+            ageRes.reqMassage,
+            genderRes.reqMassage].join(' ')
+    })
+})
+
+app.patch('/users/:userId', async (req, res) => {
+    const body = req.body;
+    const {userId} = req.params
+    let isUpdated=false
 
     const users = await fsService.reader()
 
-    if ((+userId + 1 > 0) && (+userId < users.length)) {
-
-        if ((typeof body.age !== 'undefined') && (!isNaN(+body.age))) {
-            if (+body.age > 0) {
-                ageIsValid = true
-            } else {
-                ageIsValid = false
-                reqMassage = 'Age is incorrect'
-            }
-        } else {
-            ageIsValid = false
-            reqMassage = 'Data is incorrect'
-        }
-
-        if (typeof body.name !== 'undefined') {
-            if ((typeof body.name === 'string') && (body.name.length > 1)) {
-                nameIsValid = true
-            } else {
-                nameIsValid = false
-                reqMassage = 'Name is incorrect'
-            }
-        } else {
-            nameIsValid = false
-            reqMassage = 'Data is incorrect'
-        }
-
-        if (typeof body.gender !== 'undefined') {
-            if (body.gender === 'male' || body.gender === 'female' || body.gender === 'mixed') {
-                genderIsValid = true
-            } else {
-                genderIsValid = false
-                reqMassage = 'Gender is incorrect'
-            }
-        } else {
-            nameIsValid = false
-            reqMassage = 'Data is incorrect'
-        }
-        console.log("body", body);
-        // users.push(body);
-        if (ageIsValid && nameIsValid && genderIsValid) {
-
-            users[userId] = {...body}
-            await fsService.writer(users)
-
-            res.status(201).json({
-                message: `User ${userId} updated!`
-            })
-        } else {
-            res.status(400).json({
-                message: reqMassage
-            })
-        }
-
-    } else {
+    const index=users.findIndex(user=>user.id===+userId)
+    if (index===-1){
         res.send('UserId not found')
+        return
     }
 
+    for (const bodyKey in body) {
+        switch (bodyKey){
+            case "name":
+                users[index]=nameIsValid(bodyKey).isValid?{...users[index],bodyKey:body[bodyKey]}:{...users[index]}
+                isUpdated=true
+                break
+            case "age":
+                users[index]=ageIsValid(bodyKey).isValid?{...users[index],bodyKey:body[bodyKey]}:{...users[index]}
+                isUpdated=true
+                break
+            case "gender":
+                users[index]=genderIsValid(bodyKey).isValid?{...users[index],bodyKey:body[bodyKey]}:{...users[index]}
+                isUpdated=true
+                break
+            default:
+        }
+    }
+    if (isUpdated){
+        await fsService.writer(users)
+
+        res.status(201).json({
+            message: 'User updated!'
+        })
+        return
+    }
+
+    res.status(400).json({
+        message:'Not Updated'
+        // message: [nameRes.reqMassage,
+        //     ageRes.reqMassage,
+        //     genderRes.reqMassage].join(' ')
+    })
 })
