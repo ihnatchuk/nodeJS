@@ -1,6 +1,12 @@
 const express = require('express')
+require('dotenv').config()
+
+const configs=require('./config/configs')
+const User=require('./dataBase/User')
+
+const mongoose=require('mongoose')
 const app = express()
-app.listen(5000)
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 
@@ -8,7 +14,7 @@ const fsService = require('./fs.service')
 const {ageIsValid, nameIsValid, genderIsValid} = require("./validator");
 
 app.get('/users', async (req, res) => {
-    const users = await fsService.reader()
+    const users = await User.find()
     res.json(users)
 })
 app.get('/users/:userId', async (req, res) => {
@@ -147,4 +153,11 @@ app.patch('/users/:userId', async (req, res) => {
         //     ageRes.reqMassage,
         //     genderRes.reqMassage].join(' ')
     })
+})
+
+app.listen(configs.PORT,async ()=>{
+    console.log(configs.MONGO_URL)
+        await mongoose.connect(configs.MONGO_URL);
+    // await mongoose.connect("mongodb+srv://ihnatchukpp:xtHNAdTTB1HOro4M@testdb.umj9k3d.mongodb.net/?retryWrites=true&w=majority");
+    console.log(`Server listen ${configs.PORT}`)
 })
