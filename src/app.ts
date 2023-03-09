@@ -53,7 +53,7 @@ app.put("/users/:userId", async (req: Request, res: Response) => {
 // app.put("/users/:userId", async (req: Request, res: Response) => {
 //   const body = req.body;
 //   const { userId } = req.params;
-//
+
 //   const nameRes = nameIsValid(body.name);
 //   const ageRes = ageIsValid(body.age);
 //   const genderRes = genderIsValid(body.gender);
