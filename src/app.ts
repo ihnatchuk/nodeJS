@@ -49,7 +49,7 @@ app.put("/users/:userId", async (req: Request, res: Response) => {
     message: "UserModel updated!",
   });
 });
-//
+
 // app.put("/users/:userId", async (req: Request, res: Response) => {
 //   const body = req.body;
 //   const { userId } = req.params;
