@@ -21,6 +21,10 @@ const userSchema = new Schema(
       type: String,
       enum: EGenders,
     },
+    phone: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

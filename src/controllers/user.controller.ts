@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { User } from "../models/user.model";
+import { userService } from "../services/user.service";
 import { ICommonResponse, IUser } from "../types/user.types";
 
 class UserController {
@@ -10,7 +11,7 @@ class UserController {
     next: NextFunction
   ): Promise<Response<IUser[]>> {
     try {
-      const users = await User.find();
+      const users = await userService.getAll();
       return res.json(users);
     } catch (e) {
       next(e);
@@ -22,8 +23,7 @@ class UserController {
     next: NextFunction
   ): Promise<Response<IUser>> {
     try {
-      const { userId } = req.params;
-      const user: IUser = await User.findById(userId);
+      const { user } = req.res.locals;
       return res.json(user);
     } catch (e) {
       next(e);
@@ -42,7 +42,6 @@ class UserController {
         data: user,
       });
     } catch (e) {
-      // return res.status(400).send(e.message);
       next(e);
     }
   }
@@ -51,29 +50,25 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<Response<ICommonResponse<IUser>>> {
+  ): Promise<Response<IUser>> {
     const { userId } = req.params;
     const body = req.body;
     try {
-      const user = await User.updateOne({ _id: userId }, body);
-      return res.status(201).json({
-        message: "User updated!",
-        data: user,
-      });
+      const user = await User.findByIdAndUpdate(userId, body, { new: true });
+      return res.status(201).json(user);
     } catch (e) {
       next(e);
-      // return res.status(400).send(e.message);
     }
   }
   public async delete(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<Response> {
+  ): Promise<void> {
     try {
       const { userId } = req.params;
       await User.deleteOne({ _id: userId });
-      return res.sendStatus(204);
+      res.sendStatus(204);
     } catch (e) {
       next(e);
     }
