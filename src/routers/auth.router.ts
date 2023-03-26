@@ -7,12 +7,13 @@ const router = Router();
 
 router.post(
   "/register",
-  userMiddleware.isUserValidCreate,
+  userMiddleware.isValidCreate,
   userMiddleware.getDynamicallyAndThrow("email", "body"),
   authController.register
 );
 router.post(
   "/login",
+  userMiddleware.isValidLogin,
   userMiddleware.getDynamicallyorThrow("email", "body"),
   authController.login
 );

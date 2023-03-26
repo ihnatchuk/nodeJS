@@ -73,7 +73,7 @@ class UserMiddleware {
       }
     };
   }
-  public async isUserValidCreate(
+  public async isValidCreate(
     req: Request,
     res: Response,
     next: NextFunction
@@ -91,7 +91,7 @@ class UserMiddleware {
     }
   }
 
-  public async isUserValidUpdate(
+  public async isValidUpdate(
     req: Request,
     res: Response,
     next: NextFunction
@@ -108,7 +108,23 @@ class UserMiddleware {
       next(e);
     }
   }
-  public async isUserIdValid(
+  public async isValidLogin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { error } = UserValidator.loginUser.validate(req.body);
+
+      if (error) {
+        throw new ApiError(error.message, 400);
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async isIdValid(
     req: Request,
     res: Response,
     next: NextFunction
