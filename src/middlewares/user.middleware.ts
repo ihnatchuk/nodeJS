@@ -2,7 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { isObjectIdOrHexString } from "mongoose";
 
 import { ApiError } from "../errors/api.error";
+import { User } from "../models/user.model";
 import { userService } from "../services/user.service";
+import { IRequest } from "../types";
 import { UserValidator } from "../validators";
 
 class UserMiddleware {
@@ -22,6 +24,54 @@ class UserMiddleware {
     } catch (e) {
       next(e);
     }
+  }
+
+  public getDynamicallyAndThrow(
+    fieldname: string,
+    from = "body",
+    dbField = fieldname
+  ) {
+    return async (req: IRequest, res: Response, next: NextFunction) => {
+      try {
+        const fieldValue = req[from][fieldname];
+
+        const user = await User.findOne({ [dbField]: fieldValue });
+
+        if (user) {
+          throw new ApiError(
+            `User with ${fieldname} ${fieldValue} already exists`,
+            409
+          );
+        }
+        next();
+      } catch (e) {
+        next(e);
+      }
+    };
+  }
+  public getDynamicallyorThrow(
+    fieldname: string,
+    from = "body",
+    dbField = fieldname
+  ) {
+    return async (req: IRequest, res: Response, next: NextFunction) => {
+      try {
+        const fieldValue = req[from][fieldname];
+
+        const user = await User.findOne({ [dbField]: fieldValue });
+
+        if (!user) {
+          throw new ApiError(
+            `User with ${fieldname} ${fieldValue} not found`,
+            409
+          );
+        }
+        req.res.locals = user;
+        next();
+      } catch (e) {
+        next(e);
+      }
+    };
   }
   public async isUserValidCreate(
     req: Request,
