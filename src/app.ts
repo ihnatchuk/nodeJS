@@ -1,7 +1,8 @@
 import express, { NextFunction, Request, Response } from "express";
+import fileUploader from "express-fileupload";
 import mongoose from "mongoose";
 
-import { configs } from "./config/configs";
+import { configs } from "./configs";
 import { authRouter, userRouter } from "./routers";
 import { IError } from "./types";
 
@@ -9,6 +10,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUploader());
 
 app.use("/users", userRouter);
 app.use("/auth", authRouter);

@@ -1,12 +1,3 @@
-export enum EGenders {
-  // eslint-disable-next-line no-unused-vars
-  male = "male",
-  // eslint-disable-next-line no-unused-vars
-  female = "female",
-  // eslint-disable-next-line no-unused-vars
-  mixed = "mixed",
-}
-
 export interface IUser {
   _id?: string;
   name: string;
@@ -14,6 +5,7 @@ export interface IUser {
   email: string;
   password: string;
   gender: string;
+  avatar?: string;
 }
 export interface ICommonResponse<T> {
   message: string;

@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
+import { UploadedFile } from "express-fileupload";
 
-import { User } from "../models/user.model";
-import { userService } from "../services/user.service";
+import { User } from "../models";
+import { userService } from "../services";
 import { ICommonResponse, IUser } from "../types";
 
 class UserController {
@@ -69,6 +70,22 @@ class UserController {
       const { userId } = req.params;
       await User.deleteOne({ _id: userId });
       res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async uploadAvatar(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { userId } = req.params;
+
+      const avatar = req.files.avatar as UploadedFile;
+      console.log(req.files);
+      const user = await userService.uploadAvatar(avatar, userId);
+      res.status(201).json(user);
     } catch (e) {
       next(e);
     }

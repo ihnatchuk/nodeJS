@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-import { EGenders } from "../types";
+import { EGenders } from "../enums";
 
 const userSchema = new Schema(
   {
@@ -24,6 +24,10 @@ const userSchema = new Schema(
     phone: {
       type: String,
       required: true,
+    },
+    avatar: {
+      type: String,
+      required: false,
     },
   },
   {
