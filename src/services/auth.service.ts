@@ -1,5 +1,5 @@
-import { ApiError } from "../errors/api.error";
-import { User } from "../models/user.model";
+import { ApiError } from "../errors";
+import { User } from "../models";
 import { ICredentials, ITokenPair } from "../types";
 import { IUser } from "../types";
 import { passwordService } from "./password.service";

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { isObjectIdOrHexString } from "mongoose";
 
-import { ApiError } from "../errors/api.error";
-import { User } from "../models/user.model";
-import { userService } from "../services/user.service";
+import { ApiError } from "../errors";
+import { User } from "../models";
+import { userService } from "../services";
 import { IRequest } from "../types";
 import { UserValidator } from "../validators";
 
