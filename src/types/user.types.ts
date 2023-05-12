@@ -5,6 +5,7 @@ export interface IUser {
   email: string;
   password: string;
   gender: string;
+  role: string;
   avatar?: string;
 }
 export interface ICommonResponse<T> {

@@ -1,22 +1,24 @@
 import { Router } from "express";
 
+import { carsController } from "../controllers/cars.controller";
 import { carsListController } from "../controllers/cars.list.controller";
 import { carsListMiddleware } from "../middlewares/cars.list.middleware";
+import { carsMiddleware } from "../middlewares/cars.middleware";
 // import { authMiddleware } from "../middlewares";
 
 const router = Router();
 
-router.get("/", carsListController.getAll);
+router.get("/", carsController.getAll);
 
 router.post(
   "/",
   // authMiddleware.checkAccessToken,
-  carsListMiddleware.isValidCreate,
-  carsListController.create
+  carsMiddleware.isValidCreate,
+  carsController.create
 );
 
 router.put(
-  "/:carBrandId",
+  "/:carId",
   // authMiddleware.checkAccessToken,
   carsListMiddleware.isIdValid,
   carsListMiddleware.isValidUpdate,
@@ -25,7 +27,7 @@ router.put(
 );
 
 router.delete(
-  "/:carBrandId",
+  "/:carId",
   // authMiddleware.checkAccessToken,
   carsListMiddleware.isIdValid,
   carsListMiddleware.getByIdOrThrow,

@@ -12,6 +12,8 @@ const carSaleSchema = new Schema(
     brand: { type: String, required: true, trim: true },
     model: { type: String, required: true, trim: true },
     year: { type: Number, required: true },
+    price: { type: Number, required: true },
+    currency: { type: String, required: true },
     active: Boolean,
     fuel: { type: String, trim: true },
     engineVolume: Number,
@@ -24,7 +26,7 @@ const carSaleSchema = new Schema(
     description: String,
   },
   {
-    versionKey: true,
+    versionKey: "__v",
     timestamps: true,
   }
 );
