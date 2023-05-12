@@ -1,6 +1,6 @@
 import { ApiError } from "../errors";
 import { CarSale } from "../models/cars.sale.model";
-import { ICarInfo, ICarsListItem } from "../types";
+import { ICarInfo } from "../types";
 
 class CarsService {
   public async getAll(): Promise<ICarInfo[]> {
@@ -11,7 +11,7 @@ class CarsService {
     }
   }
 
-  public async create(body: ICarsListItem): Promise<void> {
+  public async create(body: ICarInfo): Promise<void> {
     try {
       await CarSale.create(body);
     } catch (e) {
@@ -26,7 +26,15 @@ class CarsService {
       throw new ApiError(e.message, e.status);
     }
   }
-
+  public async update(id: string, body: ICarInfo): Promise<ICarInfo> {
+    try {
+      return await CarSale.findByIdAndUpdate(id, body, {
+        new: true,
+      });
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
   public async delete(id: string): Promise<void> {
     try {
       await CarSale.findByIdAndDelete(id);

@@ -1,8 +1,6 @@
 import { Router } from "express";
 
 import { carsController } from "../controllers/cars.controller";
-import { carsListController } from "../controllers/cars.list.controller";
-import { carsListMiddleware } from "../middlewares/cars.list.middleware";
 import { carsMiddleware } from "../middlewares/cars.middleware";
 // import { authMiddleware } from "../middlewares";
 
@@ -20,18 +18,18 @@ router.post(
 router.put(
   "/:carId",
   // authMiddleware.checkAccessToken,
-  carsListMiddleware.isIdValid,
-  carsListMiddleware.isValidUpdate,
-  carsListMiddleware.getByIdOrThrow,
-  carsListController.update
+  carsMiddleware.isIdValid,
+  carsMiddleware.isValidUpdate,
+  carsMiddleware.getByIdOrThrow,
+  carsController.update
 );
 
 router.delete(
   "/:carId",
   // authMiddleware.checkAccessToken,
-  carsListMiddleware.isIdValid,
-  carsListMiddleware.getByIdOrThrow,
-  carsListController.delete
+  carsMiddleware.isIdValid,
+  carsMiddleware.getByIdOrThrow,
+  carsController.delete
 );
 
 export const carsRouter = router;

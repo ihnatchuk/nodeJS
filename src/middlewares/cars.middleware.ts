@@ -48,7 +48,7 @@ class CarsMiddleware {
     next: NextFunction
   ): Promise<void> {
     try {
-      if (!isObjectIdOrHexString(req.params.carBrandId)) {
+      if (!isObjectIdOrHexString(req.params.carId)) {
         throw new ApiError("Id is not valid", 400);
       }
       next();
@@ -62,12 +62,12 @@ class CarsMiddleware {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { carBrandId } = req.params;
-      const carsListItem = await carsService.getById(carBrandId);
-      if (!carsListItem) {
+      const { carId } = req.params;
+      const carInfo = await carsService.getById(carId);
+      if (!carInfo) {
         throw new ApiError("Brand id not found", 422);
       }
-      res.locals.carsListItem = carsListItem;
+      res.locals.car = carInfo;
       next();
     } catch (e) {
       next(e);

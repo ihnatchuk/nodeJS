@@ -4,14 +4,11 @@ import { EBodyType, EFuel } from "../enums";
 import { ECurrency } from "../enums";
 
 export class CarsValidator {
-  private static _user_id = Joi.string().required();
-  private static brand = Joi.string().min(2).max(50).trim().required();
-  private static model = Joi.string().trim().min(1).max(50).required();
-  private static year = Joi.number()
-    .min(1970)
-    .max(new Date().getFullYear())
-    .required();
-  private static price = Joi.number().min(1).required();
+  private static _user_id = Joi.string();
+  private static brand = Joi.string().min(2).max(50).trim();
+  private static model = Joi.string().trim().min(1).max(50);
+  private static year = Joi.number().min(1970).max(new Date().getFullYear());
+  private static price = Joi.number().min(1);
   private static currency = Joi.valid(...Object.values(ECurrency));
   private static fuel = Joi.valid(...Object.values(EFuel));
   private static bodyType = Joi.valid(...Object.values(EBodyType));

@@ -24,7 +24,7 @@ export enum EBodyType {
   // eslint-disable-next-line no-unused-vars
   stationWagon = "Station Wagon",
   // eslint-disable-next-line no-unused-vars
-  PickupTruck = "Pickup truck",
+  pickupTruck = "Pickup truck",
   // eslint-disable-next-line no-unused-vars
   suv = "SUV",
   // eslint-disable-next-line no-unused-vars

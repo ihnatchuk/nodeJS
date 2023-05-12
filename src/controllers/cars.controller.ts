@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
 import { userService } from "../services";
-import { carsListService } from "../services/cars.list.service";
 import { carsService } from "../services/cars.service";
 import { ICarInfo, ICommonResponse } from "../types";
 
@@ -36,28 +35,22 @@ class CarsController {
     }
   }
 
-  // public async update(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<Response<ICarInfo>> {
-  //   const { carBrandId } = req.params;
-  //   const body = req.body;
-  //   try {
-  //     const { carInfo } = res.locals;
-  //     body.models = [...carsListItem.models, ...body.models];
-  //     const carListItemRes = await CarSale.findByIdAndUpdate(
-  //       carBrandId,
-  //       body,
-  //       {
-  //         new: true,
-  //       }
-  //     );
-  //     return res.status(201).json(carListItemRes);
-  //   } catch (e) {
-  //     next(e);
-  //   }
-  // }
+  public async update(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<ICarInfo>> {
+    const { carId } = req.params;
+    const body = req.body;
+    try {
+      const { carInfo } = res.locals;
+      const bodyUpdated = { ...body, ...carInfo };
+      const car = await carsService.update(carId, bodyUpdated);
+      return res.status(201).json(car);
+    } catch (e) {
+      next(e);
+    }
+  }
   public async delete(
     req: Request,
     res: Response,
@@ -65,7 +58,7 @@ class CarsController {
   ): Promise<void> {
     try {
       const { carId } = req.params;
-      await carsListService.delete(carId);
+      await carsService.delete(carId);
       res.sendStatus(204);
     } catch (e) {
       next(e);
