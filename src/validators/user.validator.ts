@@ -23,7 +23,7 @@ export class UserValidator {
     gender: this.gender,
     phone: this.phone.required(),
   });
-  static createUserByMngr = Joi.object({
+  static createUserByAdmin = Joi.object({
     name: this.firstName.required(),
     email: this.email.required(),
     password: this.password.required(),
@@ -38,7 +38,7 @@ export class UserValidator {
     gender: this.gender,
     phone: this.phone,
   });
-  static updateUserByMngr = Joi.object({
+  static updateUserByAdmin = Joi.object({
     role: this.role.required(),
     phone: this.phone,
   });

@@ -91,20 +91,20 @@ class UserMiddleware {
       next(e);
     }
   }
-  public async isValidCreateByMngr(
+  public async isValidCreateByAdmin(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const { error, value } = UserValidator.createUserByMngr.validate(
+      const { error, value } = UserValidator.createUserByAdmin.validate(
         req.body
       );
 
       if (error) {
         throw new ApiError(error.message, 400);
       }
-      req.body = value;
+      res.locals.body = value;
       next();
     } catch (e) {
       next(e);
@@ -121,26 +121,26 @@ class UserMiddleware {
       if (error) {
         throw new ApiError(error.message, 400);
       }
-      req.body = value;
+      res.locals.body = value;
       next();
     } catch (e) {
       next(e);
     }
   }
-  public async isValidUpdateByMngr(
+  public async isValidUpdateByAdmin(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const { error, value } = UserValidator.updateUserByMngr.validate(
+      const { error, value } = UserValidator.updateUserByAdmin.validate(
         req.body
       );
 
       if (error) {
         throw new ApiError(error.message, 400);
       }
-      req.body = value;
+      res.locals.body = value;
       next();
     } catch (e) {
       next(e);
@@ -194,10 +194,10 @@ class UserMiddleware {
     next: NextFunction
   ): Promise<void> {
     try {
-      const userIdFromToken = res.locals.tokenInfo._user_id;
-      const userIdToUpdate = res.locals.user._id;
-      if (userIdFromToken !== userIdToUpdate) {
-        throw new ApiError("No permission", 422);
+      const userIdFromToken = res.locals.tokenInfo._user_id.toString();
+      const userIdToUpdate = res.locals.user._id.toString();
+      if (userIdFromToken !== userIdToUpdate && !res.locals.permitted) {
+        throw new ApiError("No permission to update other user", 422);
       }
       next();
     } catch (e) {

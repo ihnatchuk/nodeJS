@@ -7,7 +7,7 @@ import { IUser } from "../types";
 class AuthController {
   public async register(req: Request, res: Response, next: NextFunction) {
     try {
-      await authService.register(req.res.locals.body);
+      await authService.register(res.locals.body);
       res.sendStatus(201);
     } catch (e) {
       next(e);

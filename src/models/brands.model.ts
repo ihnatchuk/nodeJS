@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 
-const carsListSchema = new Schema({
+const brandsSchema = new Schema({
   brand: { type: String, required: true, trim: true, unique: true },
   models: [String],
 });
-export const CarsList = model("carsList", carsListSchema);
+export const Brands = model("brands", brandsSchema);

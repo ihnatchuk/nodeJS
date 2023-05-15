@@ -3,9 +3,13 @@ import fileUploader from "express-fileupload";
 import mongoose from "mongoose";
 
 import { configs } from "./configs";
-import { authRouter, userRouter } from "./routers";
-import { carsListRouter } from "./routers/cars.list.router";
-import { carsRouter } from "./routers/cars.router";
+import {
+  adminRouter,
+  authRouter,
+  brandsRouter,
+  carsRouter,
+  userRouter,
+} from "./routers";
 import { IError } from "./types";
 
 const app = express();
@@ -14,7 +18,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(fileUploader());
 
-app.use("/brands", carsListRouter);
+app.use("/admin", adminRouter);
+app.use("/brands", brandsRouter);
 app.use("/cars", carsRouter);
 app.use("/users", userRouter);
 app.use("/auth", authRouter);

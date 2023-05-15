@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export interface ICarsListItem {
+export interface IBrand {
   _id?: Types.ObjectId;
   brand: string;
   models: string[];

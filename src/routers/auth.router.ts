@@ -15,8 +15,9 @@ router.post(
 );
 router.post(
   "/create-user",
-  roleMiddleware.checkRole(ERoles.manager),
-  userMiddleware.isValidCreateByMngr,
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
+  roleMiddleware.checkPermission,
+  userMiddleware.isValidCreateByAdmin,
   userMiddleware.getDynamicallyAndThrow("email", "body"),
   authController.register
 );

@@ -5,35 +5,27 @@ import { ApiError } from "../errors";
 import { IRequest } from "../types";
 
 class RoleMiddleware {
-  public checkRole(roleToCheck: ERoles) {
+  public checkPermission(req: IRequest, res: Response, next: NextFunction) {
+    try {
+      if (!res.locals.permitted) {
+        throw new ApiError("No permission", 401);
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+  public checkRoleAndGivePermission(permittedRoles: ERoles[]) {
     return (req: IRequest, res: Response, next: NextFunction) => {
       try {
-        const role = res.locals.tokenInfo.role;
-
-        if (role !== roleToCheck) {
-          throw new ApiError("No permission", 401);
-        }
+        const userRole = res.locals.tokenInfo.role;
+        const index = permittedRoles.findIndex((role) => userRole === role);
+        res.locals.permitted = index !== -1;
         next();
       } catch (e) {
         next(e);
       }
     };
   }
-  // public async checkRole(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   try {
-  //     const role = res.locals.tokenInfo.role;
-  //
-  //     if (role !== ERoles.manager) {
-  //       throw new ApiError("No permission", 401);
-  //     }
-  //     next();
-  //   } catch (e) {
-  //     next(e);
-  //   }
-  // }
 }
 export const roleMiddleware = new RoleMiddleware();

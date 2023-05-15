@@ -2,19 +2,17 @@ import { NextFunction, Request, Response } from "express";
 import { isObjectIdOrHexString } from "mongoose";
 
 import { ApiError } from "../errors";
-import { carsListService } from "../services/cars.list.service";
-import { CarsListValidator } from "../validators/cars.list.validator";
+import { brandsService } from "../services/brands.service";
+import { BrandsValidator } from "../validators/brands.validator";
 
-class CarsListMiddleware {
+class BrandsMiddleware {
   public async isValidCreate(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const { error, value } = CarsListValidator.createCarsListItem.validate(
-        req.body
-      );
+      const { error, value } = BrandsValidator.createBrand.validate(req.body);
 
       if (error) {
         throw new ApiError(error.message, 400);
@@ -32,9 +30,7 @@ class CarsListMiddleware {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { error, value } = CarsListValidator.updateCarsListItem.validate(
-        req.body
-      );
+      const { error, value } = BrandsValidator.updateBrand.validate(req.body);
 
       if (error) {
         throw new ApiError(error.message, 400);
@@ -67,7 +63,7 @@ class CarsListMiddleware {
   ): Promise<void> {
     try {
       const { carBrandId } = req.params;
-      const carsListItem = await carsListService.getById(carBrandId);
+      const carsListItem = await brandsService.getById(carBrandId);
       if (!carsListItem) {
         throw new ApiError("Brand id not found", 422);
       }
@@ -78,4 +74,4 @@ class CarsListMiddleware {
     }
   }
 }
-export const carsListMiddleware = new CarsListMiddleware();
+export const brandsMiddleware = new BrandsMiddleware();

@@ -13,25 +13,29 @@ const router = Router();
 
 router.get(
   "/",
-  roleMiddleware.checkRole(ERoles.manager),
+  authMiddleware.checkAccessToken,
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
+  roleMiddleware.checkPermission,
   userController.getAll
 );
 
 router.get(
   "/:userId",
   authMiddleware.checkAccessToken,
-  roleMiddleware.checkRole(ERoles.manager),
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
   userMiddleware.isIdValid,
   userMiddleware.getByIdOrThrow,
+  userMiddleware.checkUserId,
   userController.getById
 );
 
 router.delete(
   "/:userId",
   authMiddleware.checkAccessToken,
-  roleMiddleware.checkRole(ERoles.manager),
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
   userMiddleware.isIdValid,
   userMiddleware.getByIdOrThrow,
+  userMiddleware.checkUserId,
   userController.delete
 );
 // route to update user by himself
@@ -42,15 +46,16 @@ router.put(
   userMiddleware.getByIdOrThrow,
   userMiddleware.checkUserId,
   userMiddleware.isValidUpdate,
-  userMiddleware.getByIdOrThrow,
   userController.update
 );
 // route to update user by manager
 router.put(
   "/set-role/:userId",
   authMiddleware.checkAccessToken,
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
+  roleMiddleware.checkPermission,
   userMiddleware.isIdValid,
-  userMiddleware.isValidUpdateByMngr,
+  userMiddleware.isValidUpdateByAdmin,
   userMiddleware.getByIdOrThrow,
   userController.update
 );
