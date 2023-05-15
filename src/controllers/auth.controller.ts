@@ -7,7 +7,7 @@ import { IUser } from "../types";
 class AuthController {
   public async register(req: Request, res: Response, next: NextFunction) {
     try {
-      await authService.register(req.body);
+      await authService.register(req.res.locals.body);
       res.sendStatus(201);
     } catch (e) {
       next(e);
@@ -27,6 +27,7 @@ class AuthController {
       );
       await Token.create({
         _user_id: user._id,
+        role: user.role || "unknown",
         ...tokenPair,
       });
       res.json(tokenPair).status(200);

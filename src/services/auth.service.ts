@@ -28,6 +28,7 @@ class AuthService {
       const tokenPair = await tokenService.generateTokenPair({
         name: user.name,
         id: user._id,
+        role: user.role,
       });
       return tokenPair;
     } catch (e) {

@@ -1,13 +1,22 @@
 import { Router } from "express";
 
 import { authController } from "../controllers";
-import { userMiddleware } from "../middlewares";
+import { ERoles } from "../enums";
+import { roleMiddleware, userMiddleware } from "../middlewares";
 
 const router = Router();
 
 router.post(
   "/register",
   userMiddleware.isValidCreate,
+  userMiddleware.getDynamicallyAndThrow("email", "body"),
+  userMiddleware.setRole(ERoles.seller),
+  authController.register
+);
+router.post(
+  "/create-user",
+  roleMiddleware.checkRole(ERoles.manager),
+  userMiddleware.isValidCreateByMngr,
   userMiddleware.getDynamicallyAndThrow("email", "body"),
   authController.register
 );

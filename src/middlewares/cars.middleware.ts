@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { isObjectIdOrHexString } from "mongoose";
 
 import { ApiError } from "../errors";
+import { userService } from "../services";
 import { carsService } from "../services/cars.service";
 import { CarsValidator } from "../validators/cars.validator";
 
@@ -68,6 +69,25 @@ class CarsMiddleware {
         throw new ApiError("Brand id not found", 422);
       }
       res.locals.car = carInfo;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async getByUserIdOrThrow(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { _user_id: userId } = req.body;
+      if (!isObjectIdOrHexString(userId)) {
+        throw new ApiError("UserId is not valid", 400);
+      }
+      const user = await userService.getById(userId);
+      if (!user) {
+        throw new ApiError("User id not found", 422);
+      }
       next();
     } catch (e) {
       next(e);

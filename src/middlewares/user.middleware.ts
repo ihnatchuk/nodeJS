@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { isObjectIdOrHexString } from "mongoose";
 
+import { ERoles } from "../enums";
 import { ApiError } from "../errors";
 import { User } from "../models";
 import { userService } from "../services";
@@ -90,7 +91,25 @@ class UserMiddleware {
       next(e);
     }
   }
+  public async isValidCreateByMngr(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { error, value } = UserValidator.createUserByMngr.validate(
+        req.body
+      );
 
+      if (error) {
+        throw new ApiError(error.message, 400);
+      }
+      req.body = value;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
   public async isValidUpdate(
     req: Request,
     res: Response,
@@ -98,6 +117,25 @@ class UserMiddleware {
   ): Promise<void> {
     try {
       const { error, value } = UserValidator.updateUser.validate(req.body);
+
+      if (error) {
+        throw new ApiError(error.message, 400);
+      }
+      req.body = value;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async isValidUpdateByMngr(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { error, value } = UserValidator.updateUserByMngr.validate(
+        req.body
+      );
 
       if (error) {
         throw new ApiError(error.message, 400);
@@ -132,6 +170,34 @@ class UserMiddleware {
     try {
       if (!isObjectIdOrHexString(req.params.userId)) {
         throw new ApiError("Id is not valid", 400);
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+  public setRole(role: ERoles) {
+    return (req: IRequest, res: Response, next: NextFunction) => {
+      try {
+        const { body } = req;
+        body.role = role;
+        req.res.locals.body = body;
+        next();
+      } catch (e) {
+        next(e);
+      }
+    };
+  }
+  public async checkUserId(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const userIdFromToken = res.locals.tokenInfo._user_id;
+      const userIdToUpdate = res.locals.user._id;
+      if (userIdFromToken !== userIdToUpdate) {
+        throw new ApiError("No permission", 422);
       }
       next();
     } catch (e) {

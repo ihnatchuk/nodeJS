@@ -21,14 +21,25 @@ export class UserValidator {
     password: this.password.required(),
     age: this.age,
     gender: this.gender,
-    role: this.role,
+    phone: this.phone.required(),
+  });
+  static createUserByMngr = Joi.object({
+    name: this.firstName.required(),
+    email: this.email.required(),
+    password: this.password.required(),
+    role: this.role.required(),
+    age: this.age,
+    gender: this.gender,
     phone: this.phone.required(),
   });
   static updateUser = Joi.object({
     name: this.firstName,
     age: this.age,
     gender: this.gender,
-    role: this.role,
+    phone: this.phone,
+  });
+  static updateUserByMngr = Joi.object({
+    role: this.role.required(),
     phone: this.phone,
   });
   static loginUser = Joi.object({

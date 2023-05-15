@@ -23,7 +23,7 @@ class CarsController {
     res: Response,
     next: NextFunction
   ): Promise<Response<ICommonResponse<ICarInfo>>> {
-    const body = req.body;
+    const body = { ...req.body, active: false };
     try {
       const carInfo = await carsService.create(body);
       return res.status(201).json({
@@ -44,7 +44,7 @@ class CarsController {
     const body = req.body;
     try {
       const { carInfo } = res.locals;
-      const bodyUpdated = { ...body, ...carInfo };
+      const bodyUpdated = { ...body, ...carInfo, active: false };
       const car = await carsService.update(carId, bodyUpdated);
       return res.status(201).json(car);
     } catch (e) {

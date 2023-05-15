@@ -12,6 +12,7 @@ router.post(
   "/",
   // authMiddleware.checkAccessToken,
   carsMiddleware.isValidCreate,
+  carsMiddleware.getByUserIdOrThrow,
   carsController.create
 );
 

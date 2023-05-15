@@ -9,6 +9,10 @@ const tokenSchema = new Schema(
       required: true,
       ref: User,
     },
+    role: {
+      type: String,
+      required: true,
+    },
     accessToken: {
       type: String,
       required: true,
