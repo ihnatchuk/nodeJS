@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
-import { carsService, userService } from "../services";
+import { activateAttemptsNumber } from "../constants";
+import { carsService, statsService, userService } from "../services";
 import { ICarInfo, ICommonResponse } from "../types";
 
 class CarsController {
@@ -25,6 +26,7 @@ class CarsController {
     try {
       const { carId } = req.params;
       const car = await carsService.getById(carId);
+      statsService.makeStats(carId);
       return res.json(car);
     } catch (e) {
       next(e);
@@ -35,7 +37,11 @@ class CarsController {
     res: Response,
     next: NextFunction
   ): Promise<Response<ICommonResponse<ICarInfo>>> {
-    const body = { ...req.body, active: false };
+    const body = {
+      ...req.body,
+      active: false,
+      activateAttempts: activateAttemptsNumber,
+    };
     try {
       const carInfo = await carsService.create(body);
       return res.status(201).json({
@@ -56,7 +62,26 @@ class CarsController {
     const body = req.body;
     try {
       const { carInfo } = res.locals;
-      const bodyUpdated = { ...body, ...carInfo, active: false };
+      const bodyUpdated = {
+        ...body,
+        ...carInfo,
+        active: false,
+      };
+      const car = await carsService.update(carId, bodyUpdated);
+      return res.status(201).json(car);
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async activate(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<ICarInfo>> {
+    try {
+      const { carId } = req.params;
+      const { carInfo } = res.locals;
+      const bodyUpdated = { ...carInfo, active: true };
       const car = await carsService.update(carId, bodyUpdated);
       return res.status(201).json(car);
     } catch (e) {

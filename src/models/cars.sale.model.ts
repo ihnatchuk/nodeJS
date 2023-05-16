@@ -14,7 +14,6 @@ const carSaleSchema = new Schema(
     year: { type: Number, required: true },
     price: { type: Number, required: true },
     currency: { type: String, required: true },
-    active: Boolean,
     fuel: { type: String, trim: true },
     engineVolume: Number,
     doors: Number,
@@ -24,9 +23,11 @@ const carSaleSchema = new Schema(
     location: { type: String, trim: true },
     features: [String],
     description: String,
+    active: Boolean,
+    activateAttempts: Number,
   },
   {
-    versionKey: "__v",
+    versionKey: false,
     timestamps: true,
   }
 );

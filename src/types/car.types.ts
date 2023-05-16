@@ -9,6 +9,7 @@ export interface ICar {
   price: number;
   currency: string;
   active?: boolean;
+  activateAttempts?: number;
 }
 export interface ICarInfo extends ICar {
   fuel?: string;

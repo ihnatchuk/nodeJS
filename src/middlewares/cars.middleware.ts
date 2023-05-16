@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { isObjectIdOrHexString } from "mongoose";
 
+import { obsceneList } from "../constants";
 import { ApiError } from "../errors";
 import { CarSale } from "../models/cars.sale.model";
 import { carsService, userService } from "../services";
@@ -144,6 +145,53 @@ class CarsMiddleware {
       if (userIdFromToken !== userIdFromCarInfo) {
         throw new ApiError("No permission. It is not your car", 422);
       }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async checkCarDescription(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { description } = res.locals.car;
+      if (!description) {
+        throw new ApiError("Refused!!! Description required", 422);
+      }
+      const isNotPermitted = obsceneList.some((word) =>
+        description.toLowerCase().includes(word)
+      );
+      if (isNotPermitted) {
+        throw new ApiError(
+          "Refused!!! Description contains obscene words",
+          422
+        );
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async checkActivateAttempts(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { carId } = req.params;
+      const { car } = res.locals;
+      const { activateAttempts: attemptsNumber } = car;
+      if (!attemptsNumber) {
+        throw new ApiError(
+          "There 0 attempts to activate left, you should email to admin to activate your ad",
+          422
+        );
+      }
+      car.activateAttempts = attemptsNumber - 1;
+      await carsService.update(carId, car);
       next();
     } catch (e) {
       next(e);

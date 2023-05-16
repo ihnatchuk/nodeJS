@@ -79,4 +79,15 @@ router.delete(
   carsMiddleware.getByIdOrThrow,
   carsController.delete
 );
+
+router.put(
+  "/activate/:carId",
+  authMiddleware.checkAccessToken,
+  carsMiddleware.isIdValid,
+  carsMiddleware.getByIdOrThrow,
+  carsMiddleware.checkCarOwner,
+  carsMiddleware.checkActivateAttempts,
+  carsMiddleware.checkCarDescription,
+  carsController.activate
+);
 export const carsRouter = router;
