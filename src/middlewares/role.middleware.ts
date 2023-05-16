@@ -19,13 +19,26 @@ class RoleMiddleware {
     return (req: IRequest, res: Response, next: NextFunction) => {
       try {
         const userRole = res.locals.tokenInfo.role;
-        const index = permittedRoles.findIndex((role) => userRole === role);
-        res.locals.permitted = index !== -1;
+        res.locals.permitted = permittedRoles.some((role) => userRole === role);
         next();
       } catch (e) {
         next(e);
       }
     };
+  }
+  public checkSetRole(req: IRequest, res: Response, next: NextFunction) {
+    try {
+      const userRole = res.locals.tokenInfo.role;
+      const setRole = res.locals.body.role;
+
+      if (userRole === ERoles.admin) return next();
+      if (setRole === ERoles.admin || setRole === ERoles.manager) {
+        throw new ApiError("No permission to set this role", 401);
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
   }
 }
 export const roleMiddleware = new RoleMiddleware();

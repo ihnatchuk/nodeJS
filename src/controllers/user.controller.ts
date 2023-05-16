@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
 import { User } from "../models";
-import { userService } from "../services";
+import { passwordService, userService } from "../services";
 import { ICommonResponse, IUser } from "../types";
 
 class UserController {
@@ -53,9 +53,16 @@ class UserController {
     next: NextFunction
   ): Promise<Response<IUser>> {
     const { userId } = req.params;
-    const body = req.body;
+    let body = req.body;
     try {
-      const user = await User.findByIdAndUpdate(userId, body, { new: true });
+      const { password } = body;
+      if (password) {
+        const hashedPassword = await passwordService.hash(password);
+        body = { ...body, password: hashedPassword };
+      }
+      const user = await User.findByIdAndUpdate(userId, body, {
+        new: true,
+      });
       return res.status(201).json(user);
     } catch (e) {
       next(e);

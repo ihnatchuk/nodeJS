@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
-import { userService } from "../services";
-import { carsService } from "../services/cars.service";
+import { carsService, userService } from "../services";
 import { ICarInfo, ICommonResponse } from "../types";
 
 class CarsController {
@@ -14,6 +13,19 @@ class CarsController {
     try {
       const cars = await carsService.getAll();
       return res.json(cars);
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async getById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<ICarInfo>> {
+    try {
+      const { carId } = req.params;
+      const car = await carsService.getById(carId);
+      return res.json(car);
     } catch (e) {
       next(e);
     }

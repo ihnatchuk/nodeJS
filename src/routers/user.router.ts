@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { userController } from "../controllers";
+import { authController, userController } from "../controllers";
 import { ERoles } from "../enums";
 import {
   authMiddleware,
@@ -50,14 +50,25 @@ router.put(
 );
 // route to update user by manager
 router.put(
-  "/set-role/:userId",
+  "/update/:userId",
   authMiddleware.checkAccessToken,
   roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
   roleMiddleware.checkPermission,
   userMiddleware.isIdValid,
   userMiddleware.isValidUpdateByAdmin,
   userMiddleware.getByIdOrThrow,
+  roleMiddleware.checkSetRole,
   userController.update
+);
+router.post(
+  "/create",
+  authMiddleware.checkAccessToken,
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
+  roleMiddleware.checkPermission,
+  userMiddleware.isValidCreateByAdmin,
+  userMiddleware.getDynamicallyAndThrow("email", "body"),
+  roleMiddleware.checkSetRole,
+  authController.register
 );
 router.put(
   "/:userId/avatar",

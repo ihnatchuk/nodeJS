@@ -39,7 +39,12 @@ export class UserValidator {
     phone: this.phone,
   });
   static updateUserByAdmin = Joi.object({
-    role: this.role.required(),
+    name: this.firstName,
+    email: this.email,
+    password: this.password,
+    role: this.role,
+    age: this.age,
+    gender: this.gender,
     phone: this.phone,
   });
   static loginUser = Joi.object({

@@ -27,7 +27,7 @@ class AuthController {
       );
       await Token.create({
         _user_id: user._id,
-        role: user.role || "unknown",
+        role: user.role,
         ...tokenPair,
       });
       res.json(tokenPair).status(200);
