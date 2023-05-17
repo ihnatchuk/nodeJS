@@ -10,7 +10,20 @@ class CarsService {
       throw new ApiError(e.message, e.status);
     }
   }
-
+  public async getAllActivated(): Promise<ICarInfo[]> {
+    try {
+      return CarSale.find({ active: true });
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+  public async getMyCars(userId: string): Promise<ICarInfo[]> {
+    try {
+      return CarSale.find({ _user_id: userId });
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
   public async create(body: ICarInfo): Promise<void> {
     try {
       await CarSale.create(body);
@@ -21,7 +34,8 @@ class CarsService {
 
   public async getById(id: string): Promise<ICarInfo> {
     try {
-      return CarSale.findById(id);
+      const car: ICarInfo = await CarSale.findById(id);
+      if (car.active) return car;
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

@@ -104,7 +104,7 @@ class UserMiddleware {
       if (error) {
         throw new ApiError(error.message, 400);
       }
-      res.locals.body = value;
+      req.body = value;
       next();
     } catch (e) {
       next(e);
@@ -121,7 +121,7 @@ class UserMiddleware {
       if (error) {
         throw new ApiError(error.message, 400);
       }
-      res.locals.body = value;
+      req.body = value;
       next();
     } catch (e) {
       next(e);
@@ -140,7 +140,7 @@ class UserMiddleware {
       if (error) {
         throw new ApiError(error.message, 400);
       }
-      res.locals.body = value;
+      req.body = value;
       next();
     } catch (e) {
       next(e);

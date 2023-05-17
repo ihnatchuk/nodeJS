@@ -18,6 +18,31 @@ class CarsController {
       next(e);
     }
   }
+  public async getAllActivated(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<ICarInfo[]>> {
+    try {
+      const cars = await carsService.getAllActivated();
+      return res.json(cars);
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async getMyCars(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<ICarInfo[]>> {
+    try {
+      const { _user_id: userId } = res.locals.tokenInfo;
+      const cars = await carsService.getMyCars(userId);
+      return res.json(cars);
+    } catch (e) {
+      next(e);
+    }
+  }
   public async getById(
     req: Request,
     res: Response,

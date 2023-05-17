@@ -3,6 +3,7 @@ import fileUploader from "express-fileupload";
 import mongoose from "mongoose";
 
 import { configs } from "./configs";
+import { cronRunner } from "./crons";
 import {
   adminRouter,
   authRouter,
@@ -10,6 +11,7 @@ import {
   carsRouter,
   userRouter,
 } from "./routers";
+import { currencyRouter } from "./routers/currency.router";
 import { IError } from "./types";
 
 const app = express();
@@ -21,6 +23,7 @@ app.use(fileUploader());
 app.use("/admin", adminRouter);
 app.use("/brands", brandsRouter);
 app.use("/cars", carsRouter);
+app.use("/currency", currencyRouter);
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
 
@@ -35,5 +38,6 @@ app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
 });
 app.listen(configs.PORT, async () => {
   await mongoose.connect(configs.MONGO_URL);
+  cronRunner();
   console.log(`Server listen ${configs.PORT}!`);
 });

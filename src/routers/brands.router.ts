@@ -1,8 +1,12 @@
 import { Router } from "express";
 
 import { brandsController } from "../controllers/brands.controller";
-import { brandsMiddleware } from "../middlewares";
-// import { authMiddleware } from "../middlewares";
+import { ERoles } from "../enums";
+import {
+  authMiddleware,
+  brandsMiddleware,
+  roleMiddleware,
+} from "../middlewares";
 
 const router = Router();
 
@@ -10,23 +14,29 @@ router.get("/", brandsController.getAll);
 
 router.post(
   "/",
-  // authMiddleware.checkAccessToken,
+  authMiddleware.checkAccessToken,
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
+  roleMiddleware.checkPermission,
   brandsMiddleware.isValidCreate,
   brandsController.create
 );
 
 router.put(
   "/:carBrandId",
-  // authMiddleware.checkAccessToken,
+  authMiddleware.checkAccessToken,
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
+  roleMiddleware.checkPermission,
   brandsMiddleware.isIdValid,
-  brandsMiddleware.isValidUpdate,
   brandsMiddleware.getByIdOrThrow,
+  brandsMiddleware.isValidUpdate,
   brandsController.update
 );
 
 router.delete(
   "/:carBrandId",
-  // authMiddleware.checkAccessToken,
+  authMiddleware.checkAccessToken,
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
+  roleMiddleware.checkPermission,
   brandsMiddleware.isIdValid,
   brandsMiddleware.getByIdOrThrow,
   brandsController.delete

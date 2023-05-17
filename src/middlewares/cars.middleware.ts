@@ -3,6 +3,7 @@ import { isObjectIdOrHexString } from "mongoose";
 
 import { obsceneList } from "../constants";
 import { ApiError } from "../errors";
+import { Brands } from "../models";
 import { CarSale } from "../models/cars.sale.model";
 import { carsService, userService } from "../services";
 import { IRequest } from "../types";
@@ -19,6 +20,16 @@ class CarsMiddleware {
 
       if (error) {
         throw new ApiError(error.message, 400);
+      }
+      const brand = await Brands.findOne({ brand: req.body.brand });
+      if (!brand) {
+        throw new ApiError("Brand not valid", 400);
+      }
+      const isModelValid = brand.models.some(
+        (model) => model === req.body.model
+      );
+      if (!isModelValid) {
+        throw new ApiError("Model not valid", 400);
       }
       req.body = value;
       next();

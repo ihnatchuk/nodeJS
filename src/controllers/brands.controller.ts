@@ -25,10 +25,10 @@ class BrandsController {
   ): Promise<Response<ICommonResponse<IBrand>>> {
     const body = req.body;
     try {
-      const carsListItem = await brandsService.create(body);
+      const brand = await brandsService.create(body);
       return res.status(201).json({
-        message: "Cars list item created!",
-        data: carsListItem,
+        message: "Brand created!",
+        data: brand,
       });
     } catch (e) {
       next(e);
@@ -41,14 +41,15 @@ class BrandsController {
     next: NextFunction
   ): Promise<Response<IBrand>> {
     const { carBrandId } = req.params;
-    const body = req.body;
     try {
-      const { carsListItem } = res.locals;
-      body.models = [...carsListItem.models, ...body.models];
-      const carListItemRes = await Brands.findByIdAndUpdate(carBrandId, body, {
-        new: true,
-      });
-      return res.status(201).json(carListItemRes);
+      const brandUpdated = await Brands.findByIdAndUpdate(
+        carBrandId,
+        req.body,
+        {
+          new: true,
+        }
+      );
+      return res.status(201).json(brandUpdated);
     } catch (e) {
       next(e);
     }

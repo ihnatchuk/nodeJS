@@ -6,7 +6,16 @@ import { authMiddleware, carsMiddleware, roleMiddleware } from "../middlewares";
 
 const router = Router();
 
-router.get("/", carsController.getAll);
+router.get("/", carsController.getAllActivated);
+
+router.get(
+  "/all",
+  authMiddleware.checkAccessToken,
+  roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
+  roleMiddleware.checkPermission,
+  carsController.getAll
+);
+router.get("/my", authMiddleware.checkAccessToken, carsController.getMyCars);
 
 router.get(
   "/:carId",
