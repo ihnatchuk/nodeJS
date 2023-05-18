@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { brandsController } from "../controllers/brands.controller";
+import { brandsController } from "../controllers";
 import { ERoles } from "../enums";
 import {
   authMiddleware,

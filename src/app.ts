@@ -11,7 +11,7 @@ import {
   carsRouter,
   userRouter,
 } from "./routers";
-import { currencyRouter } from "./routers/currency.router";
+import { currencyRouter, statisticsRouter } from "./routers";
 import { IError } from "./types";
 
 const app = express();
@@ -26,6 +26,7 @@ app.use("/cars", carsRouter);
 app.use("/currency", currencyRouter);
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
+app.use("/stat", statisticsRouter);
 
 // --- ERROR HANDLER ---
 app.use((err: IError, req: Request, res: Response, next: NextFunction) => {

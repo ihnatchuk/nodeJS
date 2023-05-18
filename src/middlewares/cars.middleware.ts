@@ -77,7 +77,10 @@ class CarsMiddleware {
   ): Promise<void> {
     try {
       const { carId } = req.params;
+      console.log(carId);
+
       const carInfo = await carsService.getById(carId);
+      console.log(carInfo);
       if (!carInfo) {
         throw new ApiError("Car id not found", 422);
       }

@@ -38,7 +38,8 @@ class CarsService {
   public async getById(id: string): Promise<ICarInfo> {
     try {
       const car: ICarInfo = await CarSale.findById(id);
-      if (car.active) return car;
+      // if (car?.active) return car;
+      return car;
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
