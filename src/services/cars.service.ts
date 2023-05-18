@@ -1,6 +1,9 @@
+import { UploadedFile } from "express-fileupload";
+
 import { ApiError } from "../errors";
 import { CarSale } from "../models/cars.sale.model";
 import { ICarInfo } from "../types";
+import { s3Service } from "./s3.service";
 
 class CarsService {
   public async getAll(): Promise<ICarInfo[]> {
@@ -52,6 +55,29 @@ class CarsService {
   public async delete(id: string): Promise<void> {
     try {
       await CarSale.findByIdAndDelete(id);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async uploadPhotos(
+    files: UploadedFile[],
+    car: ICarInfo
+  ): Promise<ICarInfo> {
+    try {
+      const carId = car._id.toString();
+      const filePathPromises = files.map((file) => {
+        return s3Service.uploadPhoto(file, "cars", carId);
+      });
+
+      const filePaths = await Promise.all(filePathPromises);
+      const updatedFilePaths = car.photos.concat(filePaths);
+
+      return await CarSale.findByIdAndUpdate(
+        carId,
+        { photos: updatedFilePaths },
+        { new: true }
+      );
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

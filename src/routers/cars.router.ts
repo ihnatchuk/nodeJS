@@ -1,8 +1,13 @@
 import { Router } from "express";
 
-import { carsController } from "../controllers/cars.controller";
+import { carsController } from "../controllers";
 import { ERoles } from "../enums";
-import { authMiddleware, carsMiddleware, roleMiddleware } from "../middlewares";
+import {
+  authMiddleware,
+  carsMiddleware,
+  fileMiddleware,
+  roleMiddleware,
+} from "../middlewares";
 
 const router = Router();
 
@@ -99,4 +104,14 @@ router.put(
   carsMiddleware.checkCarDescription,
   carsController.activate
 );
+
+router.put(
+  "/:carId/photos",
+  authMiddleware.checkAccessToken,
+  carsMiddleware.isIdValid,
+  fileMiddleware.isPhotoValid,
+  carsMiddleware.getByIdOrThrow,
+  carsController.uploadPhotos
+);
+
 export const carsRouter = router;

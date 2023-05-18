@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { UploadedFile } from "express-fileupload";
 
 import { Brands } from "../models";
-import { brandsService, userService } from "../services";
+import { brandsService } from "../services";
 import { IBrand, ICommonResponse } from "../types";
 
 class BrandsController {
@@ -63,22 +62,6 @@ class BrandsController {
       const { carBrandId } = req.params;
       await brandsService.delete(carBrandId);
       res.sendStatus(204);
-    } catch (e) {
-      next(e);
-    }
-  }
-  public async uploadAvatar(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const { userId } = req.params;
-
-      const avatar = req.files.avatar as UploadedFile;
-      console.log(req.files);
-      const user = await userService.uploadAvatar(avatar, userId);
-      res.status(201).json(user);
     } catch (e) {
       next(e);
     }

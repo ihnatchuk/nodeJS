@@ -2,12 +2,7 @@ import { Router } from "express";
 
 import { authController, userController } from "../controllers";
 import { ERoles } from "../enums";
-import {
-  authMiddleware,
-  fileMiddleware,
-  roleMiddleware,
-  userMiddleware,
-} from "../middlewares";
+import { authMiddleware, roleMiddleware, userMiddleware } from "../middlewares";
 
 const router = Router();
 
@@ -69,14 +64,6 @@ router.post(
   userMiddleware.getDynamicallyAndThrow("email", "body"),
   roleMiddleware.checkSetRole,
   authController.register
-);
-router.put(
-  "/:userId/avatar",
-  authMiddleware.checkAccessToken,
-  userMiddleware.isIdValid,
-  fileMiddleware.isAvatarValid,
-  userMiddleware.getByIdOrThrow,
-  userController.uploadAvatar
 );
 
 export const userRouter = router;

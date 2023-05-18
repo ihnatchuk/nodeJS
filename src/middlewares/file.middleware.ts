@@ -1,27 +1,29 @@
 import { NextFunction, Request, Response } from "express";
 
-import { avatarConfig } from "../configs";
+import { photoConfig } from "../configs";
 import { ApiError } from "../errors";
 
 class FileMiddleware {
-  public isAvatarValid(req: Request, res: Response, next: NextFunction) {
+  public isPhotoValid(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.files) {
         throw new ApiError("No files to upload", 400);
       }
-      if (Array.isArray(req.files.avatar)) {
-        throw new ApiError("You can upload only one photo", 400);
-      }
+      const photos = Array.isArray(req.files.photos)
+        ? req.files.photos
+        : [req.files.photos];
+      // Check if photos fit requirements
+      photos.forEach((photo) => {
+        const { size, mimetype, name } = photo;
 
-      const { size, mimetype, name } = req.files.avatar;
-
-      if (size > avatarConfig.MAX_SIZE) {
-        throw new ApiError(`File ${name} is too big.`, 400);
-      }
-      if (!avatarConfig.MIMETYPES.includes(mimetype)) {
-        throw new ApiError(`File ${name} has invalid format`, 400);
-      }
-
+        if (size > photoConfig.MAX_SIZE) {
+          throw new ApiError(`File ${name} is too big.`, 400);
+        }
+        if (!photoConfig.MIMETYPES.includes(mimetype)) {
+          throw new ApiError(`File ${name} has invalid format`, 400);
+        }
+      });
+      req.files.photos = photos;
       next();
     } catch (e) {
       next(e);

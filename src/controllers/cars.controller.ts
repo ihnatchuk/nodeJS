@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
 import { activateAttemptsNumber } from "../constants";
-import { carsService, statsService, userService } from "../services";
+import { carsService, statsService } from "../services";
 import { ICarInfo, ICommonResponse } from "../types";
 
 class CarsController {
@@ -126,18 +126,17 @@ class CarsController {
       next(e);
     }
   }
-  public async uploadAvatar(
+  public async uploadPhotos(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const { userId } = req.params;
+      const car = res.locals.car;
 
-      const avatar = req.files.avatar as UploadedFile;
-      console.log(req.files);
-      const user = await userService.uploadAvatar(avatar, userId);
-      res.status(201).json(user);
+      const photos = req.files.photos as UploadedFile[];
+      const carInfo = await carsService.uploadPhotos(photos, car);
+      res.status(201).json(carInfo);
     } catch (e) {
       next(e);
     }

@@ -23,6 +23,7 @@ const carSaleSchema = new Schema(
     location: { type: String, trim: true },
     features: [String],
     description: String,
+    photos: [String],
     active: Boolean,
     activateAttempts: Number,
   },
