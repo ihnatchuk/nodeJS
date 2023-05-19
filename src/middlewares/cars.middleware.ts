@@ -55,6 +55,25 @@ class CarsMiddleware {
       next(e);
     }
   }
+  public async isValidUpdateByAdmin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { error, value } = CarsValidator.updateCarByAdmin.validate(
+        req.body
+      );
+
+      if (error) {
+        throw new ApiError(error.message, 400);
+      }
+      req.body = value;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
 
   public async isIdValid(
     req: Request,
@@ -77,10 +96,8 @@ class CarsMiddleware {
   ): Promise<void> {
     try {
       const { carId } = req.params;
-      console.log(carId);
 
       const carInfo = await carsService.getById(carId);
-      console.log(carInfo);
       if (!carInfo) {
         throw new ApiError("Car id not found", 422);
       }

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { Currency } from "../models";
-import { ICurrency } from "../types/currency.types";
+import { currencyService } from "../services";
+import { ICurrency } from "../types";
 
 class CurrencyController {
   public async getToday(
@@ -10,9 +10,7 @@ class CurrencyController {
     next: NextFunction
   ): Promise<Response<ICurrency>> {
     try {
-      const currency = await Currency.find()
-        .sort({ createdAt: "desc" })
-        .limit(1);
+      const currency = await currencyService.getCurrency();
       return res.json(currency);
     } catch (e) {
       next(e);

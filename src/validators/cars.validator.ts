@@ -1,7 +1,6 @@
 import * as Joi from "joi";
 
-import { EBodyType, EFuel } from "../enums";
-import { ECurrency } from "../enums";
+import { EBodyType, ECurrency, EFuel, ERegions } from "../enums";
 
 export class CarsValidator {
   private static _user_id = Joi.string();
@@ -17,10 +16,11 @@ export class CarsValidator {
   private static mileage = Joi.number().min(0);
   private static seats = Joi.number().min(2).max(54);
   private static color = Joi.string().trim().min(4);
-  private static location = Joi.string().trim().min(4).max(100);
+  private static location = Joi.valid(...Object.values(ERegions));
   private static features = Joi.array().items(Joi.string());
   private static description = Joi.string().trim().min(40).max(250);
   private static photos = Joi.array().items(Joi.string().uri());
+  private static activateAttempts = Joi.number().max(3);
 
   static createCar = Joi.object({
     _user_id: this._user_id.required(),
@@ -29,6 +29,8 @@ export class CarsValidator {
     year: this.year.required(),
     price: this.price.required(),
     currency: this.currency.required(),
+    location: this.location.required(),
+    description: this.description.required(),
     fuel: this.fuel,
     bodyType: this.bodyType,
     engineVolume: this.engineVolume,
@@ -36,9 +38,7 @@ export class CarsValidator {
     mileage: this.mileage,
     seats: this.seats,
     color: this.color,
-    location: this.location,
     features: this.features,
-    description: this.description,
     photos: this.photos,
   });
   static updateCar = Joi.object({
@@ -58,5 +58,8 @@ export class CarsValidator {
     features: this.features,
     description: this.description,
     photos: this.photos,
+  });
+  static updateCarByAdmin = Joi.object({
+    activateAttempts: this.activateAttempts,
   });
 }

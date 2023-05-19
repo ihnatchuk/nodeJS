@@ -23,3 +23,5 @@ export interface ICarInfo extends ICar {
   description?: string;
   photos?: string[];
 }
+
+export type IPrice = Pick<ICar, "price" | "currency">;

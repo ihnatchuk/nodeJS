@@ -66,12 +66,12 @@ router.put(
 );
 
 router.put(
-  "/update/:carId",
+  "/allow-to-activate/:carId",
   authMiddleware.checkAccessToken,
   roleMiddleware.checkRoleAndGivePermission([ERoles.manager, ERoles.admin]),
   roleMiddleware.checkPermission,
   carsMiddleware.isIdValid,
-  carsMiddleware.isValidUpdate,
+  carsMiddleware.isValidUpdateByAdmin,
   carsMiddleware.getByIdOrThrow,
   carsController.update
 );

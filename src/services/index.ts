@@ -1,6 +1,7 @@
 export * from "./auth.service";
 export * from "./brands.service";
 export * from "./cars.service";
+export * from "./currency.service";
 export * from "./password.service";
 export * from "./s3.service";
 export * from "./stats.service";

@@ -4,5 +4,5 @@ export enum ECurrency {
   // eslint-disable-next-line no-unused-vars
   usd = "USD",
   // eslint-disable-next-line no-unused-vars
-  grn = "GRN",
+  uah = "UAH",
 }
