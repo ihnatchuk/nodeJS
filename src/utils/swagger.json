@@ -157,7 +157,14 @@
       "post": {
         "tags": ["Auth"],
         "summary": "User login",
-        "parameters": [],
+        "parameters": [{
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/LoginRequest"
+          }
+        }],
         "responses": {
           "200": {
             "description": "Login successful"
@@ -505,26 +512,517 @@
           }
         }
       }
+    },
+    "/cars": {
+      "get": {
+        "tags": ["Cars"],
+        "summary": "Get all activated cars",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Cars"],
+        "summary": "Create a new car",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CarSale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cars/all": {
+      "get": {
+        "tags": ["Cars"],
+        "summary": "Get all cars. Only for manager or admin.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cars/my": {
+      "get": {
+        "tags": ["Cars"],
+        "summary": "Get cars belonging to the authenticated user",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cars/{carId}": {
+      "get": {
+        "tags": ["Cars"],
+        "summary": "Get a car by ID",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Cars"],
+        "summary": "Update a car by ID",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CarSale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+
+      "delete": {
+        "tags": ["Cars"],
+        "summary": "Delete a car by ID",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+
+
+    "/cars/{carId}/photos": {
+      "put": {
+        "tags": ["Cars"],
+        "summary": "Upload array of photos for a car by ID",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "photos": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cars/activate/{carId}": {
+      "put": {
+        "tags": ["Cars"],
+        "summary": "Check description for obscene words and activate a car by ID",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cars/delete/{carId}": {
+      "delete": {
+        "tags": ["Cars"],
+        "summary": "Delete a car by ID. For manager and admin.",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/currency": {
+      "get": {
+        "tags": ["Currency"],
+        "summary": "Get today's currency rates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Currency"
+            }
+          }
+        }
+      }
+    },
+    "/msg": {
+      "get": {
+        "tags": ["Messages"],
+        "summary": "Get all messages. For admin and manager only.",
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Messages"],
+        "summary": "Create a new message",
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/msg/my": {
+      "get": {
+        "tags": ["Messages"],
+        "summary": "Get messages belonging to the authenticated user",
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/msg/{messageId}": {
+      "delete": {
+        "tags": ["Messages"],
+        "summary": "Delete a message by ID",
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/comments/{carId}": {
+      "get": {
+        "tags": ["Comments"],
+        "summary": "Get comments by car ID",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Comments"],
+        "summary": "Create a new comment",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          }
+        ],
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/statistics/views/{carId}/{days}": {
+      "get": {
+        "tags": ["Statistics"],
+        "summary": "Get views statistics for a car",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "days",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/statistics/rap/{carId}": {
+      "get": {
+        "tags": ["Statistics"],
+        "summary": "Get region average price for a car",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/statistics/ap/{carId}": {
+      "get": {
+        "tags": ["Statistics"],
+        "summary": "Get average price for a car in all regions",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
-  "securityDefinitions": {
-    "AccessToken": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
-    },
-    "RolePermission": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
-    },
-    "RoleSet": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
-    }
-  },
+
   "definitions": {
+    "CarSale": {
+      "type": "object",
+      "properties": {
+        "_user_id": {
+          "type": "string",
+          "description": "The ID of the user associated with the car"
+        },
+        "brand": {
+          "type": "string",
+          "description": "The brand of the car",
+          "example": "Toyota"
+        },
+        "model": {
+          "type": "string",
+          "description": "The model of the car",
+          "example": "Corolla"
+        },
+        "year": {
+          "type": "integer",
+          "description": "The year of the car",
+          "example": 2020
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the car",
+          "example": 25000
+        },
+        "currency": {
+          "type": "string",
+          "description": "The currency of the car's price",
+          "example": "USD"
+        },
+        "fuel": {
+          "type": "string",
+          "description": "The fuel type of the car",
+          "example": "Gasoline"
+        },
+        "engineVolume": {
+          "type": "number",
+          "description": "The engine volume of the car",
+          "example": 2.0
+        },
+        "doors": {
+          "type": "integer",
+          "description": "The number of doors in the car",
+          "example": 4
+        },
+        "mileage": {
+          "type": "integer",
+          "description": "The mileage of the car",
+          "example": 50000
+        },
+        "seats": {
+          "type": "integer",
+          "description": "The number of seats in the car",
+          "example": 5
+        },
+        "color": {
+          "type": "string",
+          "description": "The color of the car",
+          "example": "Blue"
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the car",
+          "example": "Lvivska obl"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "An array of features of the car"
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the car",
+          "example": "Машина у сепер стані, як нова. Повний фарш."
+        },
+        "photos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "An array of photo URLs associated with the car"
+        },
+        "active": {
+          "type": "boolean",
+          "description": "The activation status of the car"
+        },
+        "activateAttempts": {
+          "type": "integer",
+          "example": 3,
+          "description": "The number of activation attempts for the car"
+        }
+      }
+    },
     "User": {
       "type": "object",
       "properties": {
@@ -565,6 +1063,82 @@
         "avatar": {
           "type": "string",
           "description": "The avatar of the user"
+        }
+      }
+    },
+    "Currency": {
+      "type": "object",
+      "properties": {
+        "uah": {
+          "type": "number",
+          "example": 37.0,
+          "description": "The currency rate for Ukrainian Hryvnia (UAH)"
+        },
+        "eur": {
+          "type": "number",
+          "example": 0.924,
+          "description": "The currency rate for Euro (EUR)"
+        }
+      }
+    },
+    "Message": {
+      "type": "object",
+      "properties": {
+        "_user_id": {
+          "type": "string",
+          "description": "The ID of the user sending the message"
+        },
+        "whom": {
+          "type": "string",
+          "enum": ["manager", "admin"],
+          "description": "The recipient of the message"
+        },
+        "messageTheme": {
+          "type": "string",
+          "description": "The theme of the message"
+        },
+        "messageText": {
+          "type": "string",
+          "description": "The content of the message"
+        }
+      }
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "_user_id": {
+          "type": "string",
+          "description": "The ID of the user who posted the comment"
+        },
+        "_car_id": {
+          "type": "string",
+          "description": "The ID of the car associated with the comment"
+        },
+        "comment": {
+          "type": "string",
+          "description": "The content of the comment"
+        }
+      }
+    },
+    "RegisterRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
         }
       }
     },

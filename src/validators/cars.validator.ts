@@ -10,7 +10,7 @@ export class CarsValidator {
   private static currency = Joi.valid(...Object.values(ECurrency));
   private static fuel = Joi.valid(...Object.values(EFuel));
   private static bodyType = Joi.valid(...Object.values(EBodyType));
-  private static engineVolume = Joi.number().min(500).max(10000);
+  private static engineVolume = Joi.number().min(0.5).max(10);
   private static doors = Joi.number().min(2).max(5);
   private static mileage = Joi.number().min(0);
   private static seats = Joi.number().min(2).max(54);
