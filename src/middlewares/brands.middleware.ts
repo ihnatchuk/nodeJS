@@ -3,7 +3,7 @@ import { isObjectIdOrHexString } from "mongoose";
 
 import { ApiError } from "../errors";
 import { brandsService } from "../services";
-import { BrandsValidator } from "../validators/brands.validator";
+import { BrandsValidator } from "../validators";
 
 class BrandsMiddleware {
   public async isValidCreate(

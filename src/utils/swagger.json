@@ -1,0 +1,701 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample of Carstore server.",
+    "version": "1.0.6",
+    "title": "Swagger Cars",
+    "contact": {
+      "email": "ihnatchukpp@gmail.com"
+    }
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Admin",
+      "description": "Administrator can create and update other users and appoint them roles: seller, premiumSeller, manager and another admin."
+    },
+    {
+      "name": "Auth",
+      "description": "Admin and ordinary users can register and login here. They can refresh their access token also."
+    },
+    {
+      "name": "Users",
+      "description": "Operations with user's accounts. Administrator or manager can get users, create, update and delete them, set a role of premiumSeller, even change passwords."
+    },
+    {
+      "name": "Brands",
+      "description": "Operations with car's brand and model list. Administrator or manager can get, create, update and delete brands and their models. Models list can be updated by list of models."
+    },
+    {
+      "name": "Cars",
+      "description": "We can create car's ads with description and photos. Ad becomes active after validation. You can update car's ad a lot of times, but you have only 3 attempts to activate it. If you want to sell more than one car you should buy a premium account. Non authorised user can get all cars' ads."
+    },
+    {
+      "name": "Currency",
+      "description": "You can get current xchange of USD as a base currency. Data updated at 5am every day form PrivatBank API."
+    },
+    {
+      "name": "Messages",
+      "description": "Authorised user can send a message for admin or manager, can get all his own messages also. Admin or manager can get all massages or delete them."
+    },
+    {
+      "name": "Comments",
+      "description": "Authorised user can write a comment to a car's ad, and can get all comments to car's ad."
+    },
+    {
+      "name": "Statistics",
+      "description": "Premium seller can get statistics of views of his ads, average price of his cars in his location and in whole state. Ad treats as viewed if it is gotten by Id."
+    }
+  ],
+  "paths": {
+    "/admin/users": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Create a new user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Access token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User created successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/admin/users/{userId}": {
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Update a user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Access token"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/register/admin": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new admin",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Admin registered successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User login",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh access token",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Access token refreshed successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get all users",
+        "security": [
+          {
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create a new user",
+        "security": [
+          {
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCreatePayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user by ID",
+        "security": [
+          {
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user by ID (self-update)",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUpdatePayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete user by ID",
+        "security": [
+          {
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/update/{userId}": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user by ID (admin or manager)",
+        "security": [
+          {
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
+          },
+          {
+            "RoleSet": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUpdatePayloadByAdmin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/brands": {
+      "get": {
+        "tags": ["Brands"],
+        "summary": "Get all brands",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Brands"],
+        "summary": "Create a new brand",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Access token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Brand created successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/brands/{carBrandId}": {
+      "put": {
+        "tags": ["Brands"],
+        "summary": "Update a brand",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Access token"
+          },
+          {
+            "name": "carBrandId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "Car brand ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Brand updated successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Brand not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Brands"],
+        "summary": "Delete a brand",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Access token"
+          },
+          {
+            "name": "carBrandId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "Car brand ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Brand deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Brand not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "AccessToken": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    },
+    "RolePermission": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    },
+    "RoleSet": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "The unique identifier of the user"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the user"
+        },
+        "password": {
+          "type": "string",
+          "description": "The password of the user"
+        },
+        "age": {
+          "type": "number",
+          "description": "The age of the user"
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female", "mixed"],
+          "description": "The gender of the user"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The phone number of the user"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["customer", "seller", "premiumSeller", "manager", "admin"],
+          "description": "The role of the user"
+        },
+        "avatar": {
+          "type": "string",
+          "description": "The avatar of the user"
+        }
+      }
+    },
+    "UserCreatePayload": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the user"
+        },
+        "password": {
+          "type": "string",
+          "description": "The password of the user"
+        },
+        "age": {
+          "type": "number",
+          "description": "The age of the user"
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female", "mixed"],
+          "description": "The gender of the user"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The phone number of the user"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["customer", "seller", "premiumSeller", "manager", "admin"],
+          "description": "The role of the user"
+        },
+        "avatar": {
+          "type": "string",
+          "description": "The avatar of the user"
+        }
+      },
+      "required": ["name", "email", "password", "phone"]
+    },
+    "UserUpdatePayload": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The updated name of the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "The updated email address of the user"
+        },
+        "age": {
+          "type": "number",
+          "description": "The updated age of the user"
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female", "mixed"],
+          "description": "The updated gender of the user"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The updated phone number of the user"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["customer", "seller", "premiumSeller", "manager", "admin"],
+          "description": "The updated role of the user"
+        },
+        "avatar": {
+          "type": "string",
+          "description": "The updated avatar of the user"
+        }
+      }
+    },
+    "UserUpdatePayloadByAdmin": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The updated name of the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "The updated email address of the user"
+        },
+        "age": {
+          "type": "number",
+          "description": "The updated age of the user"
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female", "mixed"],
+          "description": "The updated gender of the user"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The updated phone number of the user"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["customer", "seller", "premiumSeller", "manager", "admin"],
+          "description": "The updated role of the user"
+        },
+        "avatar": {
+          "type": "string",
+          "description": "The updated avatar of the user"
+        }
+      }
+    }
+  },
+
+  "securityDefinitions": {
+    "AccessToken": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    },
+    "RolePermission": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    },
+    "RoleSet": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+
+}

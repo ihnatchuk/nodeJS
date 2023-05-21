@@ -15,6 +15,14 @@ router.post(
 );
 
 router.post(
+  "/register/admin",
+  userMiddleware.isValidCreate,
+  userMiddleware.getDynamicallyAndThrow("email", "body"),
+  userMiddleware.setRole(ERoles.admin),
+  authController.register
+);
+
+router.post(
   "/login",
   userMiddleware.isValidLogin,
   userMiddleware.getDynamicallyorThrow("email", "body"),

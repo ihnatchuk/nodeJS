@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import fileUploader from "express-fileupload";
 import mongoose from "mongoose";
+import * as swaggerUi from "swagger-ui-express";
 
 import { configs } from "./configs";
 import { cronRunner } from "./crons";
@@ -9,10 +10,14 @@ import {
   authRouter,
   brandsRouter,
   carsRouter,
+  commentsRouter,
+  currencyRouter,
+  messagesRouter,
+  statisticsRouter,
   userRouter,
 } from "./routers";
-import { currencyRouter, statisticsRouter } from "./routers";
 import { IError } from "./types";
+import * as swaggerJson from "./utils/swagger.json";
 
 const app = express();
 
@@ -27,7 +32,9 @@ app.use("/currency", currencyRouter);
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
 app.use("/stat", statisticsRouter);
-
+app.use("/msg", messagesRouter);
+app.use("/comments", commentsRouter);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerJson));
 // --- ERROR HANDLER ---
 app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
   const status = err.status || 500;

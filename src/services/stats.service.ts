@@ -1,7 +1,6 @@
 import { ECurrency, EStats } from "../enums";
 import { ApiError } from "../errors";
-import { CarSale } from "../models/cars.sale.model";
-import { Stats } from "../models/stats.model";
+import { CarSale, Stats } from "../models";
 import { ICarInfo, IPrice } from "../types";
 import { currencyService } from "./currency.service";
 
@@ -61,6 +60,8 @@ class StatsService {
   public async getAveragePrice(prices: IPrice[]): Promise<number> {
     try {
       const Xchange = await currencyService.getCurrency();
+
+      if (!prices.length) return 0;
 
       const priceArray = prices.map((price) => {
         let priceUSD = 0;

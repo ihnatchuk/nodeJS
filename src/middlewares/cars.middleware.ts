@@ -3,11 +3,9 @@ import { isObjectIdOrHexString } from "mongoose";
 
 import { obsceneList } from "../constants";
 import { ApiError } from "../errors";
-import { Brands } from "../models";
-import { CarSale } from "../models/cars.sale.model";
-import { carsService, userService } from "../services";
-import { IRequest } from "../types";
-import { CarsValidator } from "../validators/cars.validator";
+import { Brands, CarSale } from "../models";
+import { carsService } from "../services";
+import { CarsValidator } from "../validators";
 
 class CarsMiddleware {
   public async isValidCreate(
@@ -31,6 +29,7 @@ class CarsMiddleware {
       if (!isModelValid) {
         throw new ApiError("Model not valid", 400);
       }
+      value._user_id = res.locals.tokenInfo._user_id;
       req.body = value;
       next();
     } catch (e) {
@@ -107,64 +106,29 @@ class CarsMiddleware {
       next(e);
     }
   }
-  public async getByUserIdOrThrow(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const { _user_id: userId } = req.body;
-      if (!isObjectIdOrHexString(userId)) {
-        throw new ApiError("UserId is not valid", 400);
-      }
-      const user = await userService.getById(userId);
-      if (!user) {
-        throw new ApiError("User id not found", 422);
-      }
-      next();
-    } catch (e) {
-      next(e);
-    }
-  }
-  public getDynamicallyAndThrow(
-    fieldname: string,
-    from = "body",
-    dbField = fieldname
-  ) {
-    return async (req: IRequest, res: Response, next: NextFunction) => {
-      try {
-        const fieldValue = req[from][fieldname];
 
-        const user = await CarSale.findOne({ [dbField]: fieldValue });
-
-        if (user) {
-          throw new ApiError(
-            `User with ${fieldname} ${fieldValue} already have one car to sale`,
-            409
-          );
-        }
-        next();
-      } catch (e) {
-        next(e);
-      }
-    };
-  }
-  public async checkUserId(
+  public async isFirstCarCreating(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
       const userIdFromToken = res.locals.tokenInfo._user_id.toString();
-      const userIdFromBody = req.body._user_id.toString();
-      if (userIdFromToken !== userIdFromBody) {
-        throw new ApiError("No permission to create car for other user", 422);
+
+      const user = await CarSale.findOne({ _user_id: userIdFromToken });
+      const permitted = res.locals.permitted;
+      if (user && !permitted) {
+        throw new ApiError(
+          `You must be a premiumSeller to sell more than one car`,
+          402
+        );
       }
       next();
     } catch (e) {
       next(e);
     }
   }
+
   public async checkCarOwner(
     req: Request,
     res: Response,

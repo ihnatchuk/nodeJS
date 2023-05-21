@@ -3,7 +3,6 @@ import * as Joi from "joi";
 import { EBodyType, ECurrency, EFuel, ERegions } from "../enums";
 
 export class CarsValidator {
-  private static _user_id = Joi.string();
   private static brand = Joi.string().min(2).max(50).trim();
   private static model = Joi.string().trim().min(1).max(50);
   private static year = Joi.number().min(1970).max(new Date().getFullYear());
@@ -23,7 +22,6 @@ export class CarsValidator {
   private static activateAttempts = Joi.number().max(3);
 
   static createCar = Joi.object({
-    _user_id: this._user_id.required(),
     brand: this.brand.required(),
     model: this.model.required(),
     year: this.year.required(),

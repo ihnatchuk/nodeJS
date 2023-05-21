@@ -28,8 +28,8 @@ class RoleMiddleware {
   }
   public checkSetRole(req: IRequest, res: Response, next: NextFunction) {
     try {
-      const userRole = res.locals.tokenInfo.role;
-      const setRole = res.locals.body.role;
+      const { role: userRole } = res.locals.tokenInfo;
+      const { role: setRole } = req.body;
 
       if (userRole === ERoles.admin) return next();
       if (setRole === ERoles.admin || setRole === ERoles.manager) {

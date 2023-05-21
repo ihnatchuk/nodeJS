@@ -32,26 +32,13 @@ router.get(
 router.post(
   "/",
   authMiddleware.checkAccessToken,
-  roleMiddleware.checkRoleAndGivePermission([ERoles.seller]),
-  roleMiddleware.checkPermission,
-  carsMiddleware.isValidCreate,
-  carsMiddleware.getByUserIdOrThrow,
-  carsMiddleware.checkUserId,
-  carsMiddleware.getDynamicallyAndThrow("_user_id", "body"),
-  carsController.create
-);
-
-router.post(
-  "/create",
-  authMiddleware.checkAccessToken,
   roleMiddleware.checkRoleAndGivePermission([
     ERoles.premiumSeller,
     ERoles.manager,
     ERoles.admin,
   ]),
-  roleMiddleware.checkPermission,
   carsMiddleware.isValidCreate,
-  carsMiddleware.getByUserIdOrThrow,
+  carsMiddleware.isFirstCarCreating,
   carsController.create
 );
 

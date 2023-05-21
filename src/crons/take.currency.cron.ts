@@ -1,7 +1,7 @@
 import { CronJob } from "cron";
 
 import { Currency } from "../models";
-import { IPBCurrency } from "../types/currency.types";
+import { IPBCurrency } from "../types";
 
 const takeCurrency = async (): Promise<void> => {
   let xChange: IPBCurrency[] = [];
@@ -19,4 +19,4 @@ const takeCurrency = async (): Promise<void> => {
   await Currency.create(currency);
 };
 
-export const takeCurrencyCron = new CronJob("0 8 * * *", takeCurrency);
+export const takeCurrencyCron = new CronJob("0 5 * * *", takeCurrency);

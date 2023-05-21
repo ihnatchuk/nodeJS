@@ -10,6 +10,7 @@ router.post(
   "/users",
   authMiddleware.checkAccessToken,
   roleMiddleware.checkRoleAndGivePermission([ERoles.admin]),
+  roleMiddleware.checkPermission,
   userMiddleware.isValidCreateByAdmin,
   userMiddleware.getDynamicallyAndThrow("email", "body"),
   authController.register
@@ -18,6 +19,7 @@ router.put(
   "/users/:userId",
   authMiddleware.checkAccessToken,
   roleMiddleware.checkRoleAndGivePermission([ERoles.admin]),
+  roleMiddleware.checkPermission,
   userMiddleware.isValidUpdateByAdmin,
   userMiddleware.getDynamicallyAndThrow("email", "body"),
   userController.update
