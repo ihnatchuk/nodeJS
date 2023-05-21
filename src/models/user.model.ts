@@ -26,10 +26,6 @@ const userSchema = new Schema(
       required: true,
     },
     role: { type: String, enum: ERoles },
-    avatar: {
-      type: String,
-      required: false,
-    },
   },
   {
     timestamps: true,

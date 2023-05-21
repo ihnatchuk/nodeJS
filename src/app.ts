@@ -31,7 +31,7 @@ app.use("/cars", carsRouter);
 app.use("/currency", currencyRouter);
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
-app.use("/stat", statisticsRouter);
+app.use("/statistics", statisticsRouter);
 app.use("/msg", messagesRouter);
 app.use("/comments", commentsRouter);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerJson));

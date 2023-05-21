@@ -52,14 +52,20 @@
     "/admin/users": {
       "post": {
         "tags": ["Admin"],
-        "summary": "Create a new user",
+        "summary": "Create a new admin or manager",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "type": "string",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "description": "Access token"
+            "schema": {
+              "$ref": "#/definitions/UserCreateByAdmin"
+            }
           }
         ],
         "responses": {
@@ -82,20 +88,19 @@
       "put": {
         "tags": ["Admin"],
         "summary": "Update a user",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "type": "string",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "description": "Access token"
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "type": "string",
-            "required": true,
-            "description": "User ID"
+            "schema": {
+              "$ref": "#/definitions/UserUpdateByAdmin"
+            }
           }
         ],
         "responses": {
@@ -121,7 +126,14 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Register a new user",
-        "parameters": [],
+        "parameters": [{
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/RegisterRequest"
+          }
+        }],
         "responses": {
           "200": {
             "description": "User registered successfully"
@@ -139,7 +151,14 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Register a new admin",
-        "parameters": [],
+        "parameters": [{
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/RegisterRequest"
+          }
+        }],
         "responses": {
           "200": {
             "description": "Admin registered successfully"
@@ -185,6 +204,11 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Refresh access token",
+        "security": [
+          {
+            "RefreshToken": []
+          }
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -229,16 +253,10 @@
         "tags": [
           "Users"
         ],
-        "summary": "Create a new user",
+        "summary": "Create a new user by manager or admin",
         "security": [
           {
             "AccessToken": []
-          },
-          {
-            "RolePermission": [
-              "manager",
-              "admin"
-            ]
           }
         ],
         "parameters": [
@@ -247,7 +265,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UserCreatePayload"
+              "$ref": "#/definitions/UserCreateByAdmin"
             }
           }
         ],
@@ -311,7 +329,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UserUpdatePayload"
+              "$ref": "#/definitions/UserUpdate"
             }
           }
         ],
@@ -384,7 +402,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UserUpdatePayloadByAdmin"
+              "$ref": "#/definitions/UserUpdateByAdmin"
             }
           }
         ],
@@ -412,13 +430,19 @@
       "post": {
         "tags": ["Brands"],
         "summary": "Create a new brand",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "type": "string",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "description": "Access token"
+            "schema": {
+              "$ref": "#/definitions/BrandCreate"
+            }
           }
         ],
         "responses": {
@@ -441,21 +465,28 @@
       "put": {
         "tags": ["Brands"],
         "summary": "Update a brand",
-        "parameters": [
+        "security": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "type": "string",
-            "required": true,
-            "description": "Access token"
-          },
+            "AccessToken": []
+          }
+        ],
+        "parameters": [
           {
             "name": "carBrandId",
             "in": "path",
             "type": "string",
             "required": true,
             "description": "Car brand ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BrandUpdate"
+            }
           }
+
         ],
         "responses": {
           "200": {
@@ -478,14 +509,12 @@
       "delete": {
         "tags": ["Brands"],
         "summary": "Delete a brand",
-        "parameters": [
+        "security": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "type": "string",
-            "required": true,
-            "description": "Access token"
-          },
+            "AccessToken": []
+          }
+        ],
+        "parameters": [
           {
             "name": "carBrandId",
             "in": "path",
@@ -547,6 +576,17 @@
       "get": {
         "tags": ["Cars"],
         "summary": "Get all cars. Only for manager or admin.",
+        "security": [
+          {
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -558,6 +598,11 @@
       "get": {
         "tags": ["Cars"],
         "summary": "Get cars belonging to the authenticated user",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -586,6 +631,11 @@
       "put": {
         "tags": ["Cars"],
         "summary": "Update a car by ID",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "carId",
@@ -612,6 +662,11 @@
       "delete": {
         "tags": ["Cars"],
         "summary": "Delete a car by ID",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "carId",
@@ -627,35 +682,36 @@
         }
       }
     },
-
-
     "/cars/{carId}/photos": {
       "put": {
         "tags": ["Cars"],
         "summary": "Upload array of photos for a car by ID",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "carId",
             "in": "path",
+            "description": "ID of the car",
             "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
+            "name": "photos",
+            "in": "formData",
+            "description": "Photos to upload",
             "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "photos": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
+            "type": "array",
+            "items": {
+              "type": "file"
             }
           }
+        ],
+        "consumes": [
+          "multipart/form-data"
         ],
         "responses": {
           "200": {
@@ -668,6 +724,11 @@
       "put": {
         "tags": ["Cars"],
         "summary": "Check description for obscene words and activate a car by ID",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "carId",
@@ -687,6 +748,17 @@
       "delete": {
         "tags": ["Cars"],
         "summary": "Delete a car by ID. For manager and admin.",
+        "security": [
+          {
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
+          }
+        ],
         "parameters": [
           {
             "name": "carId",
@@ -722,8 +794,16 @@
         "summary": "Get all messages. For admin and manager only.",
         "security": [
           {
-            "accessToken": []
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
           }
+        ],
+        "parameters": [
         ],
         "responses": {
           "200": {
@@ -736,7 +816,13 @@
         "summary": "Create a new message",
         "security": [
           {
-            "accessToken": []
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
           }
         ],
         "parameters": [
@@ -762,8 +848,16 @@
         "summary": "Get messages belonging to the authenticated user",
         "security": [
           {
-            "accessToken": []
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
           }
+        ],
+        "parameters": [
         ],
         "responses": {
           "200": {
@@ -778,7 +872,13 @@
         "summary": "Delete a message by ID",
         "security": [
           {
-            "accessToken": []
+            "AccessToken": []
+          },
+          {
+            "RolePermission": [
+              "manager",
+              "admin"
+            ]
           }
         ],
         "parameters": [
@@ -847,8 +947,15 @@
     },
     "/statistics/views/{carId}/{days}": {
       "get": {
-        "tags": ["Statistics"],
+        "tags": [
+          "Statistics"
+        ],
         "summary": "Get views statistics for a car",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "carId",
@@ -863,11 +970,6 @@
             "type": "integer"
           }
         ],
-        "security": [
-          {
-            "accessToken": []
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -877,19 +979,21 @@
     },
     "/statistics/rap/{carId}": {
       "get": {
-        "tags": ["Statistics"],
-        "summary": "Get region average price for a car",
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "Get region average price of similar cars",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "carId",
             "in": "path",
             "required": true,
             "type": "string"
-          }
-        ],
-        "security": [
-          {
-            "accessToken": []
           }
         ],
         "responses": {
@@ -901,19 +1005,21 @@
     },
     "/statistics/ap/{carId}": {
       "get": {
-        "tags": ["Statistics"],
-        "summary": "Get average price for a car in all regions",
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "Get average price of similar cars in whole state",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "carId",
             "in": "path",
             "required": true,
             "type": "string"
-          }
-        ],
-        "security": [
-          {
-            "accessToken": []
           }
         ],
         "responses": {
@@ -924,6 +1030,7 @@
       }
     }
   },
+
 
   "definitions": {
     "CarSale": {
@@ -1023,46 +1130,37 @@
         }
       }
     },
-    "User": {
+    "BrandCreate": {
       "type": "object",
       "properties": {
-        "_id": {
+        "brand": {
           "type": "string",
-          "description": "The unique identifier of the user"
+          "example": "Audi",
+          "description": "Brand name of a car"
         },
-        "name": {
+        "models": {
+          "type": "array",
+          "example": ["A6", "A8", "Q5","Q7"],
+          "description": "Array of car models"
+        }
+      },
+      "required": ["brand", "models"]
+    },
+    "BrandUpdate": {
+      "type": "object",
+      "properties": {
+        "brand": {
           "type": "string",
-          "description": "The name of the user"
+          "example": "Audi",
+          "description": "Brand name of a car"
         },
-        "email": {
-          "type": "string",
-          "description": "The email address of the user"
-        },
-        "password": {
-          "type": "string",
-          "description": "The password of the user"
-        },
-        "age": {
-          "type": "number",
-          "description": "The age of the user"
-        },
-        "gender": {
-          "type": "string",
-          "enum": ["male", "female", "mixed"],
-          "description": "The gender of the user"
-        },
-        "phone": {
-          "type": "string",
-          "description": "The phone number of the user"
-        },
-        "role": {
-          "type": "string",
-          "enum": ["customer", "seller", "premiumSeller", "manager", "admin"],
-          "description": "The role of the user"
-        },
-        "avatar": {
-          "type": "string",
-          "description": "The avatar of the user"
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": ["A6", "A8", "Q5","Q7"],
+          "description": "Array of car models"
         }
       }
     },
@@ -1106,14 +1204,6 @@
     "Comment": {
       "type": "object",
       "properties": {
-        "_user_id": {
-          "type": "string",
-          "description": "The ID of the user who posted the comment"
-        },
-        "_car_id": {
-          "type": "string",
-          "description": "The ID of the car associated with the comment"
-        },
         "comment": {
           "type": "string",
           "description": "The content of the comment"
@@ -1123,132 +1213,168 @@
     "RegisterRequest": {
       "type": "object",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the user",
+          "example": "Dima"
+        },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email address of the user",
+          "pattern": "^[^\\s@]+@([^\\s@.,]+\\.)+[^\\s@.,]{2,}$",
+          "example": "dima@gmail.com"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%_*#?&])[A-Za-z\\d@$_!%*#?&]{8,}$",
+          "description": "The password of the user",
+          "example": "Ab12345!"
+        },
+        "age": {
+          "type": "number",
+          "description": "The age of the user",
+          "example": "46"
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female", "mixed"],
+          "description": "The gender of the user",
+          "example": "male"
+        },
+        "phone": {
+          "type": "string",
+          "pattern": "^([+]?\\d{1,2}[-\\s]?|)\\d{3}[-\\s]?\\d{3}[-\\s]?\\d{4}$",
+          "description": "The phone number of the user",
+          "example": "+380675555555"
         }
-      }
+      },
+      "required": ["name", "email", "password", "phone"]
     },
     "LoginRequest": {
       "type": "object",
       "properties": {
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email address of the user",
+          "pattern": "^[^\\s@]+@([^\\s@.,]+\\.)+[^\\s@.,]{2,}$",
+          "example": "dima@gmail.com"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%_*#?&])[A-Za-z\\d@$_!%*#?&]{8,}$",
+          "description": "The password of the user",
+          "example": "Ab12345!"
         }
-      }
+      },
+      "required": ["email", "password"]
     },
-    "UserCreatePayload": {
+    "UserCreateByAdmin": {
       "type": "object",
       "properties": {
         "name": {
           "type": "string",
-          "description": "The name of the user"
+          "description": "The name of the user",
+          "example": "Dima"
         },
         "email": {
           "type": "string",
-          "description": "The email address of the user"
+          "description": "The email address of the user",
+          "pattern": "^[^\\s@]+@([^\\s@.,]+\\.)+[^\\s@.,]{2,}$",
+          "example": "dima@gmail.com"
         },
         "password": {
           "type": "string",
-          "description": "The password of the user"
+          "pattern": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%_*#?&])[A-Za-z\\d@$_!%*#?&]{8,}$",
+          "description": "The password of the user",
+          "example": "Ab12345!"
         },
         "age": {
           "type": "number",
-          "description": "The age of the user"
+          "description": "The age of the user",
+          "example": "46"
         },
         "gender": {
           "type": "string",
           "enum": ["male", "female", "mixed"],
-          "description": "The gender of the user"
+          "description": "The gender of the user",
+          "example": "male"
         },
         "phone": {
           "type": "string",
-          "description": "The phone number of the user"
+          "pattern": "^([+]?\\d{1,2}[-\\s]?|)\\d{3}[-\\s]?\\d{3}[-\\s]?\\d{4}$",
+          "description": "The phone number of the user",
+          "example": "+380675555555"
         },
         "role": {
           "type": "string",
           "enum": ["customer", "seller", "premiumSeller", "manager", "admin"],
           "description": "The role of the user"
-        },
-        "avatar": {
-          "type": "string",
-          "description": "The avatar of the user"
         }
       },
-      "required": ["name", "email", "password", "phone"]
+      "required": ["name", "email", "password", "phone", "role"]
     },
-    "UserUpdatePayload": {
+    "UserUpdate": {
       "type": "object",
       "properties": {
         "name": {
           "type": "string",
-          "description": "The updated name of the user"
-        },
-        "email": {
-          "type": "string",
-          "description": "The updated email address of the user"
+          "description": "The name of the user",
+          "example": "Dima"
         },
         "age": {
           "type": "number",
-          "description": "The updated age of the user"
+          "description": "The age of the user",
+          "example": "46"
         },
         "gender": {
           "type": "string",
           "enum": ["male", "female", "mixed"],
-          "description": "The updated gender of the user"
+          "description": "The gender of the user",
+          "example": "male"
         },
         "phone": {
           "type": "string",
-          "description": "The updated phone number of the user"
-        },
-        "role": {
-          "type": "string",
-          "enum": ["customer", "seller", "premiumSeller", "manager", "admin"],
-          "description": "The updated role of the user"
-        },
-        "avatar": {
-          "type": "string",
-          "description": "The updated avatar of the user"
+          "pattern": "^([+]?\\d{1,2}[-\\s]?|)\\d{3}[-\\s]?\\d{3}[-\\s]?\\d{4}$",
+          "description": "The phone number of the user",
+          "example": "+380675555555"
         }
       }
     },
-    "UserUpdatePayloadByAdmin": {
+    "UserUpdateByAdmin": {
       "type": "object",
       "properties": {
         "name": {
           "type": "string",
-          "description": "The updated name of the user"
+          "description": "The name of the user",
+          "example": "Dima"
         },
-        "email": {
+        "password": {
           "type": "string",
-          "description": "The updated email address of the user"
+          "pattern": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%_*#?&])[A-Za-z\\d@$_!%*#?&]{8,}$",
+          "description": "The password of the user",
+          "example": "Ab12345!"
         },
         "age": {
           "type": "number",
-          "description": "The updated age of the user"
+          "description": "The age of the user",
+          "example": "46"
         },
         "gender": {
           "type": "string",
           "enum": ["male", "female", "mixed"],
-          "description": "The updated gender of the user"
+          "description": "The gender of the user",
+          "example": "male"
         },
         "phone": {
           "type": "string",
-          "description": "The updated phone number of the user"
+          "pattern": "^([+]?\\d{1,2}[-\\s]?|)\\d{3}[-\\s]?\\d{3}[-\\s]?\\d{4}$",
+          "description": "The phone number of the user",
+          "example": "+380675555555"
         },
         "role": {
           "type": "string",
           "enum": ["customer", "seller", "premiumSeller", "manager", "admin"],
           "description": "The updated role of the user"
-        },
-        "avatar": {
-          "type": "string",
-          "description": "The updated avatar of the user"
         }
       }
     }
@@ -1260,12 +1386,7 @@
       "name": "Authorization",
       "in": "header"
     },
-    "RolePermission": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
-    },
-    "RoleSet": {
+    "RefreshToken": {
       "type": "apiKey",
       "name": "Authorization",
       "in": "header"

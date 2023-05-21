@@ -40,7 +40,6 @@ export class UserValidator {
   });
   static updateUserByAdmin = Joi.object({
     name: this.firstName,
-    email: this.email,
     password: this.password,
     role: this.role,
     age: this.age,
