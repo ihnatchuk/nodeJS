@@ -744,6 +744,38 @@
         }
       }
     },
+    "/cars/allow-to-activate/{carId}": {
+      "put": {
+        "tags": ["Cars"],
+        "summary": "Manager can give additional attempts to activate car ad.",
+        "security": [
+          {
+            "AccessToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/activateAttempts"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/cars/delete/{carId}": {
       "delete": {
         "tags": ["Cars"],
@@ -1209,6 +1241,17 @@
           "description": "The content of the comment"
         }
       }
+    },
+    "activateAttempts": {
+      "type": "object",
+      "properties": {
+        "activateAttempts": {
+          "type": "number",
+          "description": "Amount of attempts to activate a car",
+          "example": 3
+        }
+      },
+      "required": ["activateAttempts"]
     },
     "RegisterRequest": {
       "type": "object",
