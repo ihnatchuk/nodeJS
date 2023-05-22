@@ -2,6 +2,7 @@ export * from "./auth.middleware";
 export * from "./brands.middleware";
 export * from "./cars.middleware";
 export * from "./comments.middleware";
+export * from "./common.middleware";
 export * from "./file.middleware";
 export * from "./messages.middleware";
 export * from "./role.middleware";

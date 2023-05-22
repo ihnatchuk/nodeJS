@@ -5,7 +5,7 @@ import { ERoles } from "../enums";
 import { ApiError } from "../errors";
 import { User } from "../models";
 import { userService } from "../services";
-import { IRequest } from "../types";
+import { IRequest, IUser } from "../types";
 import { UserValidator } from "../validators";
 
 class UserMiddleware {
@@ -203,6 +203,29 @@ class UserMiddleware {
     } catch (e) {
       next(e);
     }
+  }
+  public getDynamicallyOrThrow(
+    fieldName: string,
+    from: "body" | "query" | "params" = "body",
+    dbField: keyof IUser = "email"
+  ) {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const fieldValue = req[from][fieldName];
+
+        const user = await User.findOne({ [dbField]: fieldValue });
+
+        if (!user) {
+          throw new ApiError(`User not found`, 422);
+        }
+
+        req.res.locals = { user };
+
+        next();
+      } catch (e) {
+        next(e);
+      }
+    };
   }
 }
 export const userMiddleware = new UserMiddleware();

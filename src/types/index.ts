@@ -4,6 +4,7 @@ export * from "./comment.types";
 export * from "./common.types";
 export * from "./currency.types";
 export * from "./message.types";
+export * from "./old.password.types";
 export * from "./stats.types";
 export * from "./token.types";
 export * from "./user.types";
